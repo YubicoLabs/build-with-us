@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/hero-image.png" alt="Yubico Early Access Program Hero Image" width="180px">
+  <img src="images/hero-image.png" alt="Yubico Early Access Program Hero Image">
 </p>
 
 <h1 align="center">Yubico Early Access Program: Firmware 5.8.0 Beta 🚀</h1>
