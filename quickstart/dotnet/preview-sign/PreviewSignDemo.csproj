@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>PreviewSignDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\common\Quickstarts.Common.csproj" />
+    <!-- Local NuGet package built from the SDK fork with previewSign support.
+         The package is served from the local-previewsign feed in NuGet.Config. -->
+    <PackageReference Include="Yubico.YubiKey" Version="1.15.1-previewsign" />
+  </ItemGroup>
+</Project>

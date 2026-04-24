@@ -1,0 +1,162 @@
+# Signing Preview
+
+The `previewSign` FIDO2 extension lets a YubiKey sign raw data without including client or authenticator metadata in the signature. Standard FIDO2 signatures wrap your data in `authenticatorData || SHA-256(clientData)`, which means they only work with FIDO2 verifiers. Signatures from previewSign are made over the given input unaltered, so they work with any protocol that accepts ECDSA P-256 signatures: PDF signing (PAdES), JWT/DPoP tokens, S/MIME email, C2PA content integrity, SPIFFE workload identities, or any other standard.
+
+The extension uses ARKG (Asynchronous Remote Key Generation) to generate unlimited unique signing keys offline from a single YubiKey credential. Each derived key is cryptographically unlinkable: a verifier cannot tell that two derived keys came from the same device. You only need to touch the YubiKey when actually producing a signature.
+
+Requires YubiKey firmware 5.8+. See the main [project README](../README.md) for setup instructions.
+
+> **Early Access Only.** Unlike the other quickstarts in this repo which use the released Yubico .NET SDK, this quickstart requires a separate SDK fork built specifically for the Early Access Program. The previewSign extension, algorithm ID (-65539), and all SDK APIs shown here are not final and will change before general availability. Do not use this in production.
+
+## When to use this
+
+previewSign is for signing arbitrary data with hardware-backed keys. It is not for authentication.
+
+Real world examples from the spec and team discussions:
+
+- **Digital identity (EUDI).** Present attributes like "age over 18" or "nationality" to different services, each signed with a unique key. The services cannot cross-reference their logs to determine the same person made both presentations.
+- **Document signing.** Sign contracts, PDFs, or legal documents. The signature is standard ECDSA P-256, compatible with existing verification tools.
+- **Software signing.** Publish a derived public key as a release signing key. When you need to sign a release, touch the YubiKey to produce the signature.
+- **Workload identity.** Issue hardware-bound signing keys for SPIFFE or OAuth DPoP without exposing private key material to the host.
+
+ARKG makes it practically free to generate public keys. You only pay the user interaction cost (touch) when you actually use the associated private key. This is important for short-lived credentials like EUDI attribute certificates that expire after a week: you might generate 20 keys but only end up using a few of them.
+
+## How ARKG works
+
+When you create a credential with previewSign, the YubiKey generates two key pairs internally. It gives you the public halves:
+
+- **pkBl (blinding public key):** Used to derive new unique public keys offline. Each derivation produces a new ECDSA P-256 public key that looks completely unrelated to pkBl or any other derived key.
+- **pkKem (KEM public key):** Used to produce a "ticket" (the ARKG key handle) during derivation. The ticket is what you send back to the YubiKey when signing so it can recreate the matching private key on the fly.
+
+The private halves (`skBl`, `skKem`) never leave the YubiKey.
+
+Think of `pkBl` and `pkKem` as two halves of the same root key: one that makes public keys, one that makes tickets. The SDK wraps both inside a `PreviewSignGeneratedKey` object so you don't need to handle them separately.
+
+Algorithm: `ARKG_P256_ESP256` (-65539).
+
+## Flow
+
+```
+Step A: Generate Key (touch YubiKey, one time per RP)
+  MakeCredential with the previewSign extension.
+  YubiKey returns pkBl + pkKem and a credential ID.
+  In a real app, save these to your database. You need them to derive new
+  keys and sign later without touching the YubiKey again for registration.
+  In this demo they stay in memory since the whole flow runs in one session.
+
+Step B: Derive Public Key (offline, no YubiKey, unlimited times)
+  generatedKey.DerivePublicKey(ikm, ctx)
+  You provide:
+    - ikm: 32 random bytes you generate. The randomness that makes each
+      derived key unique and unlinkable. Different ikm = different key.
+    - ctx: a label string scoping the key to a purpose (e.g. "contract-123").
+  Already stored in generatedKey from Step A: pkBl and pkKem.
+  The SDK reads them internally so you never pass them in yourself.
+  Output:
+    - Derived public key: a unique P-256 public key. Share it with verifiers.
+    - ARKG key handle (ticket): save it. Send it to the YubiKey when signing.
+  You can discard ikm after this call. Different ikm or ctx = different unlinkable key.
+
+Step C: Sign (touch YubiKey, one touch per signature)
+  getAssertionParams.AddPreviewSignByCredentialExtension(derivedKey, message)
+  You pass derivedKey and the message.
+  Carried over from Step A inside derivedKey: DeviceKeyHandle (the credential ID).
+  Carried over from Step B inside derivedKey: ArkgKeyHandle (the ticket).
+  The SDK reads both from derivedKey and hashes the message internally (SHA-256).
+  The YubiKey reads the ticket, recreates the matching private key, signs
+  the hash, returns a DER-encoded ECDSA signature, then discards the private key.
+
+Step D: Verify (offline, no YubiKey)
+  derivedKey.VerifySignature(originalMessage, signature)
+  You pass the original message and the signature.
+  Carried over from Step B inside derivedKey: PublicKey (the derived public key).
+  The SDK reads it internally and runs standard ECDSA verify.
+  Anyone with the derived public key can verify. No secrets, no YubiKey needed.
+```
+
+### What to store
+
+After Step A (once):
+- `credentialId` to identify the credential on the YubiKey
+- `pkBl` + `pkKem` (inside `PreviewSignGeneratedKey`) to derive future keys
+
+After Step B (per derived key):
+- Derived public key, to share with verifiers
+- ARKG key handle (ticket), to request signatures from the YubiKey
+- Context label, for your own bookkeeping
+
+You can discard the random bytes (`ikm`) after derivation. They are baked into the ticket.
+
+### What the verifier receives
+
+Three things:
+- The original document
+- The DER-encoded ECDSA signature
+- The derived public key
+
+The derived public key is a standard P-256 key. The verifier does not need to know about ARKG, previewSign, or the YubiKey. They just run standard ECDSA verification.
+
+## SDK additions
+
+This quickstart uses a fork of the Yubico .NET SDK with previewSign support added. This fork is not the official released SDK. It was built specifically for the Early Access Program and the APIs here are not final. They will change when previewSign is merged into the official SDK at GA.
+
+The fork adds:
+
+- `MakeCredentialData.UnsignedExtensionOutputs` and `GetPreviewSignGeneratedKey()`: the previewSign signing public key is returned in CTAP2 response field 6 (unsigned extension outputs), not in the signed authenticator data. The fork parses this field.
+- `ArkgP256.DerivePublicKey()`: offline ARKG key derivation (KEM encapsulation, hash-to-field per RFC 9380, elliptic curve point addition via BouncyCastle).
+- `AddPreviewSignGenerateKeyExtension()` and `AddPreviewSignByCredentialExtension()`: convenience methods on `MakeCredentialParameters` and `GetAssertionParameters` that encode the CBOR extension inputs and check for extension support.
+- `AuthenticatorData.GetPreviewSignSignature()`: reads the signature from the signed extension output.
+- `PreviewSignDerivedKey.VerifySignature()`: verifies using the SDK's `EcdsaVerify` utility.
+
+## Compatibility
+
+previewSign requires firmware 5.8+. Some beta firmware versions report the extension as `"sign"` instead of `"previewSign"`. The example checks for both.
+
+```csharp
+if (!authenticatorInfo.IsExtensionSupported(Extensions.PreviewSign))
+{
+    // Extension not supported on this device.
+}
+```
+
+## Run
+
+```bash
+dotnet run
+```
+
+## Expected output
+
+```
+  previewSign: supported
+  Algorithm:   ARKG_P256_ESP256 (-65539)
+
+  STEP A: GENERATE KEY
+  Touch YubiKey to generate key...
+  Extension acknowledged by authenticator.
+  Key handle:  34 bytes
+  Key generated successfully.
+
+  STEP B: DERIVE PUBLIC KEY (offline)
+  Context:     "contract-123"
+  Derived key: 65 bytes (uncompressed EC point)
+  ARKG handle: 81 bytes (key handle for signing)
+
+  STEP C: SIGN
+  Message:     "Sign this document."
+  Touch YubiKey to sign...
+  Signature:   70-72 bytes (DER-encoded ECDSA, length varies per signing)
+  Signed successfully.
+
+  STEP D: VERIFY SIGNATURE (offline)
+  Signature valid: True
+
+  Full previewSign flow completed successfully.
+```
+
+## References
+
+- [previewSign spec (version 4)](https://yubicolabs.github.io/webauthn-sign-extension/)
+- [previewSign explainer](https://github.com/w3c/webauthn/blob/main/explainers/raw-signing-extension.md)
+- [ARKG specification (IETF draft-bradleylundberg-cfrg-arkg-08)](https://www.ietf.org/archive/id/draft-bradleylundberg-cfrg-arkg-08.html)
+- [Yubico .NET SDK FIDO2 docs](https://docs.yubico.com/yesdk/users-manual/application-fido2/fido2-overview.html)

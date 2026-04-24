@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>Quickstarts</AssemblyName>
+    <RootNamespace>Quickstarts</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="common\Quickstarts.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="hmac-secret-prf\HmacSecretDemo.cs" />
+    <Compile Include="authenticator-config\AuthenticatorConfigDemo.cs" />
+    <Compile Include="device-identity\DeviceIdentityDemo.cs" />
+    <Compile Include="third-party-payment\ThirdPartyPaymentDemo.cs" />
+    <Compile Include="preview-sign\PreviewSignDemo.cs" />
+  </ItemGroup>
+</Project>
