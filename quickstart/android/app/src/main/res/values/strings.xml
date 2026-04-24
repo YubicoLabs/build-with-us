@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Android EAP Quickstart</string>
+
+    <string name="enter_pin_button_title">Submit</string>
+    <string name="enter_pin_title">Enter Pin</string>
+    <string name="enter_pin_hint">Your PIN</string>
+    <string name="enter_pin_attempts_left">%d attempts left.</string>
+    <string name="waiting_for_calculation">Calculating …</string>
+    <string name="waiting_for_yubikey_connection">Please connect your YubiKey now.</string>
+    <string name="general_error_title">Error</string>
+    <string name="waiting_additional_information_title">Additional Info:</string>
+    <string name="general_success_title">Success</string>
+    <string name="general_success_body">Congrats, you have just created a credential with the following data.</string>
+    <string name="track_one_select_public_key_title">Public Keys Generated</string>
+    <string name="track_one_select_public_key_message">Please select a public key to generate a signature.</string>
+    <string name="track_one_signature_created_title">Successfully Signed</string>
+    <string name="track_one_signature_created_message">Your YubiKey just signed successfully a text string and verified it with your generated and selected public key.</string>
+    <string name="track_one_success_message_title">Message</string>
+    <string name="track_one_success_signature_title">Signature</string>
+    <string name="track_one_success_verified_title">Verified?</string>
+</resources>
