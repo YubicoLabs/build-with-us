@@ -10,7 +10,8 @@ These demos are designed to be "plug-and-play" so you can test hardware behavior
 
 Before diving into the code, ensure you have:
 1.  **5.8.0 EAP Hardware:** A YubiKey with the 5.8.0 beta firmware.
-2.  **Latest SDK (Pre) releases:**
+2.  **Yubico Authenticator**: [macOS](https://apps.apple.com/us/app/yubico-authenticator/id1497506650?mt=12) | [Windows](https://apps.microsoft.com/detail/9nfng39387k0?hl=en-US&gl=US)
+3.  **Latest SDK (Pre) releases:**
     * **iOS:** Yubikit 5.0.0-beta+
     * **Android:** Yubikit 3.1.0
     * **Desktop:** .NET SDK 1.10.0-beta+
