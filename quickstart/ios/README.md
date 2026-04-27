@@ -1,36 +1,56 @@
-# 🥚 Tamagotchi Gen 1 "Cyber-Pet" Integration Demo (v5.8.0-BETA)
+# YubiKey 5.8 Quickstarts for iOS/macOS
 
-> ⚠️ **ATTENTION DEVELOPER:** If you are seeing this, it means you haven't replaced the placeholder content for the Android Quickstart yet. Unless we are pivoting to 90s virtual pet hardware, please update this file.
-
-This directory contains a unified **Virtual Egg Emulator** designed to showcase the new capabilities of the **Firmware 5.8.0 Beta**, but for digital creatures that live in your pocket and beep at 3:00 AM.
-
-## 👾 Pet Overview
-
-The demo app is built using **Ancient Magic** and utilizes the latest **Tamagotchi-Kit (Beta)**. It serves as a reference implementation for:
-
--   **ARKG (Automatic Rice-cake & Kale Generation):** Generate virtual nutrition directly on the device and retrieve attestation that the pet actually ate it.
--   **PUAT (Physical Urgency Alert Tones):** Configure hardware-level beeping policies for when the pet has "made a mess" in its digital home.
--   **Storage Audit:** A utility to view the expanded capacity (Now supports up to 100 digital snacks and 64 unique ways to die of neglect).
-
----
+iOS/macOS Code/project samples demonstrating features of the YubiKey 5.8, using the [Yubico Swift SDK](https://github.com/Yubico/yubikit-swift/).
 
 ## 🛠 Prerequisites
 
--   **A Plastic Egg** with a 32x16 monochrome pixel screen.
--   **A Paperclip** (for the reset button on the back).
--   **Firmware 5.8.0 Beta:** Must support "Angel Mode."
--   **Min Battery:** 2x LR44 Button Cells (not included).
+| Requirement | Details |
+|---|---|
+| Yubico Swift SDK | Release 1.3.0 or later ([download](https://github.com/Yubico/yubikit-swift/tree/release/1.3.0)) |
+| YubiKey | Firmware 5.8 or later. |
+| FIDO2 PIN | A PIN must be set on the YubiKey to run most of these examples. You can do this in the YubiKey Authenticator, available on the [macOS App Store](https://apps.apple.com/us/app/yubico-authenticator/id1497506650?mt=12) |
+| Xcode ([latest](https://apps.apple.com/us/app/xcode/id497799835?mt=12)) | For building and running the quickstart examples/demos on a realy iOS device or mac running macOS |
 
 ---
 
-## 🏗 Project Structure
-
-The "app" is divided into modular biological functions:
+## 🏗 Projects/Samples/Demos 
 
 ```text
-egg-demo/
-├── plastic-shell/src/main/plastic/
-│   ├── pixels/             # 8-bit visual disappointment
-│   ├── hunger/             # ARKG logic (Food generation)
-│   ├── disciplining/       # PUAT logic (User interaction)
-│   └── cleanup/            # Memory management (Poop removal)
+iOS/
+├── previewSign/             # The previewSign extension proposed WebAuthn extension 
+├── prf-hmac-secret/          # hmac-secret-mc (PRF)
+├── third-party-payments/     # thirdPartyPayment, credProtect, and credBlob
+├── yubikey-management/       # GetInfo, discovery, pin
+├── WebAuthnInterceptor/       # iOS/macOS app with embedded WKWebView
+
+```
+
+## Quickstarts
+A few of the quickstarts below share the same sample project (WebAuthnInterceptorSample) that is an iOS/macOS app with an embedded WKWebView that allows you to interact with some of the newer features via the web and the YubiKey 5.8 like preview signing, prf, and others.
+
+[README](WebAuthnInterceptorSample/README.md) for the WebAuthnInterceptorSample
+
+### PreviewSign (Signing preview)
+
+The `previewSign` extension is a [proposed WebAuthn extension](https://yubicolabs.github.io/webauthn-sign-extension/4/#sctn-sign-extension) that supports hardware-backed ECDSA P-256 signing over application-defined data.
+
+- `previewSign`
+
+[README](previewSign/README.md) &#183; [Code](WebAuthnInterceptorSample/WebAuthnInterceptorSample/WebAuthnHandler.swift)
+
+---
+
+### prf-hmac-secret (hmac-secret-mc)
+
+#### <COMING SOON>(COMING SOON)
+---
+
+### third-party-payments
+
+#### <COMING SOON>(COMING SOON)
+---
+
+### yubikey-management (getInfo mostly and pin mgmnt)
+
+#### <COMING SOON>(COMING SOON)
+---
