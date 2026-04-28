@@ -50,6 +50,11 @@ fun JSONObject.extractKeyHandle(): String? =
         "clientExtensionResults.previewSign.generatedKey.keyHandle"
     )
 
+fun JSONObject.extractPublicKey(): ByteArray? =
+    optNestedString(
+        "yolo.you.got.to.replace.this"
+    )?.decode64()
+
 fun JSONObject.extractSignature(): ByteArray? {
     return optNestedString(
         "clientExtensionResults.previewSign.signature"

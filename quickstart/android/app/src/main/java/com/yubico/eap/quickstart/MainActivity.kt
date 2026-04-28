@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -54,6 +55,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackView
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
+import com.yubico.eap.quickstart.track.signing.SigningTrackView
+import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.eap.quickstart.ui.YubicoGreen
 import com.yubico.yubikit.fido.android.ui.FidoConfigManager
 import com.yubico.yubikit.fido.client.extensions.CredBlobExtension
@@ -104,17 +107,28 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         when (trackNumber) {
-                            null -> SelectTrackView(tracks = listOf("ARKG")) {
+                            null -> SelectTrackView(
+                                tracks = listOf(
+                                    stringResource(R.string.track_sign),
+                                    stringResource(R.string.track_arkg)
+                                )
+                            ) {
                                 vm.startTrack(it + 1)
                             }
 
-                            1 -> ARKGTrackView(
-                                vm.trackVm.value as ARKGTrackViewModel,
+                            1 -> SigningTrackView(
+                                vm.trackVm.value as SigningTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
+                            2 -> ARKGTrackView(
+                                vm.trackVm.value as ARKGTrackViewModel,
+                                onCopyToClipBoard = vm::copyToClipBoard
+                            ) {
+                                vm.trackNumber.value = null
+                            }
 
                             else -> Text("Track $trackNumber not found.")
                         }
@@ -139,7 +153,6 @@ fun YubiTheme(
 }
 
 @Composable
-@Preview
 fun SelectTrackView(
     tracks: List<String> = emptyList(),
     onTrackClicked: (Int) -> Unit = {},
@@ -161,7 +174,7 @@ fun SelectTrackView(
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp)
+                    .padding(horizontal = 32.dp, vertical = 8.dp)
                     .size(150.dp),
                 painter = painterResource(R.mipmap.ic_launcher_foreground_trim),
                 contentDescription = null
@@ -175,6 +188,18 @@ fun SelectTrackView(
             )
         }
     }
+}
+
+@Composable
+@Preview
+private fun SelectTrackViewPreview() {
+    SelectTrackView(
+        tracks = listOf(
+            "8 track",
+            "9 track",
+            "track attack",
+        ),
+    ) {}
 }
 
 @Composable

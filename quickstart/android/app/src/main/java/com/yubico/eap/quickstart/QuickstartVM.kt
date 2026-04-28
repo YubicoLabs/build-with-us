@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
+import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import kotlinx.coroutines.launch
 
@@ -32,19 +33,20 @@ class QuickstartVM(
     }
 
     fun startTrack(trackIndex: Int) {
-        when (trackIndex) {
-            1 -> {
-                val newTrackVM = ARKGTrackViewModel(application)
-                trackVm.value = newTrackVM
-                trackNumber.value = 1
-
-                viewModelScope.launch {
-                    newTrackVM.execute(fido)
-                }
-            }
+        val newTrackVM = when (trackIndex) {
+            1 -> SigningTrackViewModel(application)
+            2 -> ARKGTrackViewModel(application)
 
             else -> TODO("Implement track with index $trackIndex.")
         }
+
+        trackVm.value = newTrackVM
+        trackNumber.value = trackIndex
+
+        viewModelScope.launch {
+            newTrackVM.execute(fido)
+        }
+
     }
 
     fun copyToClipBoard(message: String) {
