@@ -52,7 +52,7 @@ fun JSONObject.extractKeyHandle(): String? =
 
 fun JSONObject.extractPublicKey(): ByteArray? =
     optNestedString(
-        "yolo.you.got.to.replace.this"
+        "response.publicKey"
     )?.decode64()
 
 fun JSONObject.extractSignature(): ByteArray? {

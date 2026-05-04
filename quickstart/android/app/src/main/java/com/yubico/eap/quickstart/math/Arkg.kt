@@ -1,6 +1,14 @@
 package com.yubico.eap.quickstart.math
 
+import com.yubico.eap.quickstart.helpers.DerivedPublicKey
+import com.yubico.eap.quickstart.helpers.SignExtensionName
+import com.yubico.eap.quickstart.helpers.SigningResponse
+import com.yubico.eap.quickstart.helpers.encode64
+import com.yubico.eap.quickstart.helpers.extractCredentialId
+import com.yubico.eap.quickstart.helpers.extractKeyHandle
+import com.yubico.eap.quickstart.helpers.extractSigningResponse
 import com.yubico.eap.quickstart.helpers.sha256
+import com.yubico.yubikit.fido.Cbor
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1Integer
 import org.bouncycastle.asn1.ASN1Sequence
@@ -15,10 +23,12 @@ import org.bouncycastle.crypto.params.HKDFParameters
 import org.bouncycastle.crypto.params.KeyParameter
 import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.math.ec.ECPoint
+import org.json.JSONObject
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import kotlin.experimental.xor
 import kotlin.math.ceil
+import kotlin.random.Random
 
 
 object Arkg {
@@ -195,4 +205,127 @@ object Arkg {
     private infix fun ByteArray.xor(other: ByteArray): ByteArray = indices.map {
         this[it] xor other[it]
     }.toByteArray()
+}
+
+fun JSONObject.derivePublicKeys(keyCount: Int = 1): List<DerivedPublicKey>? {
+    return try {
+        val response = extractSigningResponse()
+        response.derivePublicKeys(keyCount)
+    } catch (th: Throwable) {
+        null
+    }
+}
+
+private fun SigningResponse.derivePublicKeys(amount: Int): List<DerivedPublicKey> {
+    if (type != -65537) {
+        throw UnsupportedOperationException("Elliptic Curve type $type not supported.")
+    }
+
+    if (algorithm != -65700) {
+        throw UnsupportedOperationException("Algorithm $algorithm not supported.")
+    }
+
+    return (0..<amount).map { index ->
+        val ikm = Random.nextBytes(64)
+        val context = "TrackOneAndroidContext$index".toByteArray()
+
+        val (key, handle) = Arkg.deriveArkgPublicKey(
+            encapsulationPoint,
+            blindingPoint,
+            ikm,
+            context
+        )
+
+        DerivedPublicKey(context, key, handle)
+    }
+}
+
+fun createSignCredentialCreateOption(
+    domain: String,
+    domainName: String,
+    challenge: ByteArray,
+    userId: String,
+): String = """
+        {
+            "challenge": "${challenge.encode64()}",
+            "rp": {
+                "id": "$domain", 
+                "name": "$domainName"
+            },
+            "user": {
+                "id": "$userId",
+                "name": "eap@yubico.com",
+                "displayName": "Early Access Program"
+            },
+            "pubKeyCredParams": [
+                {
+                    "type": "public-key",
+                    "alg": -7
+                }
+            ],
+            "authenticatorSelection": {
+              "authenticatorAttachment": "cross-platform",
+              "residentKey": "discouraged",
+              "userVerification": "discouraged",
+              "requireResidentKey": false
+            },
+            "attestation": "none",
+            "extensions": {
+                "$SignExtensionName": {
+                    "generateKey": {
+                        "algorithms": [
+                            -65600,
+                            -65539,
+                            -9,
+                            -7
+                        ]
+                    }
+                }
+            }
+        }
+        """.trimIndent()
+
+fun JSONObject.createSigningAttestationOption(
+    message: ByteArray,
+    domain: String,
+    challenge: ByteArray,
+    derivedKey: DerivedPublicKey,
+): String? {
+    val credentialId = extractCredentialId()
+    val keyHandle = extractKeyHandle()
+
+    if (keyHandle == null || credentialId.isBlank()) {
+        return null
+    }
+
+    val args = Cbor.encode(
+        mapOf<Int, Any>(
+            3 to -65539,
+            -3 to -65700,
+            -2 to derivedKey.context,
+            -1 to derivedKey.keyHandle
+        )
+    )
+
+    return """ {
+            "challenge": "${challenge.encode64()}",
+            "rpId": "$domain",
+            "allowCredentials" : [{
+                "type": "public-key",
+                "id": "$credentialId"
+            }],
+            "userVerification": "discouraged",
+            "extensions": {
+                "$SignExtensionName": {
+                    "signByCredential": {
+                        "$credentialId": {
+                            "keyHandle": "$keyHandle",
+                            "tbs": "${message.encode64()}",
+                            "additionalArgs": "${args.encode64()}"
+                        }
+                    }
+                }
+            }
+        }
+        """.trimIndent()
 }

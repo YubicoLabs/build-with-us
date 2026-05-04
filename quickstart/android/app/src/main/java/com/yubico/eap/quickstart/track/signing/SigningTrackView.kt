@@ -3,6 +3,7 @@ package com.yubico.eap.quickstart.track.signing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import com.yubico.eap.quickstart.helpers.ellipsize
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.SuccessView
 import com.yubico.eap.quickstart.track.UserInformationView
@@ -28,7 +29,7 @@ fun SigningTrackView(
         )
 
         is SigningTrackViewModel.State.SignedAndVerified -> SuccessView(
-            message = typedState.message,
+            message = typedState.message.ellipsize(256),
             messageHash = typedState.messageHash,
             signature = typedState.signature,
             verified = typedState.verified,

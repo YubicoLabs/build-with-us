@@ -2,11 +2,11 @@ package com.yubico.eap.quickstart.track
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -36,42 +36,45 @@ fun SuccessView(
             modifier = Modifier.padding(16.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Column {
-                Text(
-                    style = MaterialTheme.typography.headlineMedium,
-                    text = stringResource(R.string.track_one_success_message_title)
-                )
-                Text(
-                    style = MaterialTheme.typography.bodySmall,
-                    text = message
-                )
-                Text(
-                    style = MaterialTheme.typography.bodySmall,
-                    text = messageHash.toHexString()
-                )
-                Text(
-                    style = MaterialTheme.typography.headlineMedium,
-                    text = stringResource(R.string.track_one_success_signature_title)
-                )
-                Text(
-                    style = MaterialTheme.typography.bodySmall,
-                    text = signature.toHexString()
-                )
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    style = MaterialTheme.typography.headlineMedium,
-                    text = stringResource(R.string.track_one_success_verified_title)
-                )
-                Text(
-                    modifier = Modifier.background(Color(if (verified) 0x3300FF00 else 0x33FF0000)),
-                    style = MaterialTheme.typography.bodySmall,
-                    text = if (verified) "Yes 👍" else "No 👎",
-                )
-
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = onFinished) {
-                        Text(stringResource(android.R.string.ok))
+            LazyColumn {
+                item {
+                    Text(
+                        style = MaterialTheme.typography.headlineMedium,
+                        text = stringResource(R.string.track_one_success_message_title)
+                    )
+                }
+                item { Text(style = MaterialTheme.typography.bodySmall, text = message) }
+                item { Text(style = MaterialTheme.typography.bodySmall, text = messageHash.toHexString()) }
+                item {
+                    Text(
+                        style = MaterialTheme.typography.headlineMedium,
+                        text = stringResource(R.string.track_one_success_signature_title)
+                    )
+                }
+                item { Text(style = MaterialTheme.typography.bodySmall, text = signature.toHexString()) }
+                item { Spacer(Modifier.height(16.dp)) }
+                item {
+                    Text(
+                        style = MaterialTheme.typography.headlineMedium,
+                        text = stringResource(R.string.track_one_success_verified_title)
+                    )
+                }
+                item {
+                    Text(
+                        modifier = Modifier.background(Color(if (verified) 0x3300FF00 else 0x33FF0000)),
+                        style = MaterialTheme.typography.bodySmall,
+                        text = if (verified) "Yes 👍" else "No 👎"
+                    )
+                }
+                item {
+                    Row {
+                        Spacer(modifier = Modifier.weight(1f)); Button(onClick = onFinished) {
+                        Text(
+                            stringResource(
+                                android.R.string.ok
+                            )
+                        )
+                    }
                     }
                 }
             }

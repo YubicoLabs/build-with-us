@@ -5,18 +5,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.DerivedPublicKey
-import com.yubico.eap.quickstart.helpers.SignExtensionName
-import com.yubico.eap.quickstart.helpers.SigningResponse
 import com.yubico.eap.quickstart.helpers.encode64
-import com.yubico.eap.quickstart.helpers.extractCredentialId
-import com.yubico.eap.quickstart.helpers.extractKeyHandle
 import com.yubico.eap.quickstart.helpers.extractSignature
-import com.yubico.eap.quickstart.helpers.extractSigningResponse
 import com.yubico.eap.quickstart.helpers.sha256
-import com.yubico.eap.quickstart.math.Arkg
 import com.yubico.eap.quickstart.math.Arkg.verifySignature
+import com.yubico.eap.quickstart.math.createSignCredentialCreateOption
+import com.yubico.eap.quickstart.math.createSigningAttestationOption
+import com.yubico.eap.quickstart.math.derivePublicKeys
 import com.yubico.eap.quickstart.track.TrackViewModel
-import com.yubico.yubikit.fido.Cbor
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import com.yubico.yubikit.fido.android.ui.Origin
 import kotlinx.coroutines.launch
@@ -61,48 +57,16 @@ class ARKGTrackViewModel(
         this.client = client
 
         val domain = "demo.yubico.com"
-        val challenge = Random.nextBytes(32).encode64()
+        val domainName = "Yubico Demo"
+        val challenge = Random.nextBytes(32)
         val sampleUserId: String = UUID.randomUUID().toString()
 
-        val requestJson = """
-        {
-            "challenge": "$challenge",
-            "rp": {
-                "id": "$domain", 
-                "name": "Yubico Demo"
-            },
-            "user": {
-                "id": "$sampleUserId",
-                "name": "eap@yubico.com",
-                "displayName": "Early Access Program"
-            },
-            "pubKeyCredParams": [
-                {
-                    "type": "public-key",
-                    "alg": -7
-                }
-            ],
-            "authenticatorSelection": {
-              "authenticatorAttachment": "cross-platform",
-              "residentKey": "discouraged",
-              "userVerification": "discouraged",
-              "requireResidentKey": false
-            },
-            "attestation": "none",
-            "extensions": {
-                "$SignExtensionName": {
-                    "generateKey": {
-                        "algorithms": [
-                             -65600, 
-                             -65539, 
-                             -9, 
-                             -7 
-                        ]
-                    }
-                }
-            }
-        }
-        """.trimIndent()
+        val requestJson = createSignCredentialCreateOption(
+            domain,
+            domainName,
+            challenge,
+            sampleUserId
+        )
 
         val credentialResult = client.makeCredential(
             origin = Origin("https://$domain"),
@@ -121,30 +85,13 @@ class ARKGTrackViewModel(
             )
         } else {
             val credential = JSONObject(credentialResult.getOrThrow())
-            derivePublicKeysFromCredential(credential)
-        }
-    }
-
-    private fun derivePublicKeysFromCredential(credential: JSONObject): State {
-        val pretty = credential.toString(2)
-        val message = "Credential created:\n$pretty"
-        Log.d("PKs", message)
-
-        return try {
-            val response = credential.extractSigningResponse()
-            val keys = response.derivePublicKeys(10)
-
-            Log.d("PKs", keys.toString())
-
-            State.PublicKeysDerived(
-                credential = credential,
-                keys = keys
+            credential.derivePublicKeys(23)?.let { keys ->
+                State.PublicKeysDerived(credential, keys)
+            } ?: State.Error(
+                title = "NoKeys",
+                message = "Keys could not be generated.",
+                logs = Log.logs
             )
-        } catch (th: Throwable) {
-            val message = "Error while deriving."
-            Log.e("DERIVE", message, th)
-
-            State.Error(th.toString(), message, Log.logs.reversed())
         }
     }
 
@@ -157,62 +104,22 @@ class ARKGTrackViewModel(
         val messageSha256 = message.toByteArray().sha256()
 
         val domain = "demo.yubico.com"
-        val challenge = Random.nextBytes(32).encode64()
+        val challenge = Random.nextBytes(32)
 
-        val credentialId = (state.value as State.PublicKeysDerived).credential.extractCredentialId()
-
-        val keyHandle =
-            (state.value as State.PublicKeysDerived).credential.extractKeyHandle()
-
-        if (keyHandle == null) {
-            val errorMessage = "Missing key handle in credential."
-            Log.e("ERROR", errorMessage)
-            state.value = State.Error(
-                title = "Missing key handle",
-                message = errorMessage,
-                logs = Log.logs.reversed()
-            )
-            return
-        }
-
-        val args = Cbor.encode(
-            mapOf<Int, Any>(
-                3 to -65539,
-                -3 to -65700,
-                -2 to derivedKey.context,
-                -1 to derivedKey.keyHandle
-            )
-        )
-
-        val getRequest = """ {
-            "challenge": "$challenge",
-            "rpId": "$domain",
-            "allowCredentials" : [{
-                "type": "public-key",
-                "id": "$credentialId"
-            }],
-            "userVerification": "discouraged",
-            "extensions": {
-                "$SignExtensionName": {
-                    "signByCredential": {
-                        "$credentialId": {
-                            "keyHandle": "$keyHandle",
-                            "tbs": "${messageSha256.encode64()}",
-                            "additionalArgs": "${args.encode64()}"
-                        }
-                    }
-                }
-            }
-        }
-        """.trimIndent()
+        val assertionRequest = (state.value as State.PublicKeysDerived).credential.createSigningAttestationOption(
+            message = messageSha256,
+            domain = domain,
+            challenge = challenge,
+            derivedKey = derivedKey,
+        ) ?: throw IllegalStateException("Could not create attestation request.")
 
         viewModelScope.launch {
             Log.i("CREDGET", "REQUEST_JSON")
-            Log.i("CREDGET", getRequest)
+            Log.i("CREDGET", assertionRequest)
 
             val result = client.getAssertion(
                 origin = Origin("https://$domain"),
-                request = getRequest,
+                request = assertionRequest,
                 clientDataHash = null,
             )
 
@@ -258,29 +165,5 @@ class ARKGTrackViewModel(
         (state.value as? State.Error)?.let { typedState ->
             state.value = typedState.copy(logs = Log.logs)
         }
-    }
-}
-
-private fun SigningResponse.derivePublicKeys(amount: Int): List<DerivedPublicKey> {
-    if (type != -65537) {
-        throw UnsupportedOperationException("Elliptic Curve type $type not supported.")
-    }
-
-    if (algorithm != -65700) {
-        throw UnsupportedOperationException("Algorithm $algorithm not supported.")
-    }
-
-    return (0..<amount).map { index ->
-        val ikm = Random.nextBytes(64)
-        val context = "TrackOneAndroidContext$index".toByteArray()
-
-        val (key, handle) = Arkg.deriveArkgPublicKey(
-            encapsulationPoint,
-            blindingPoint,
-            ikm,
-            context
-        )
-
-        DerivedPublicKey(context, key, handle)
     }
 }
