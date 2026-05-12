@@ -17,18 +17,21 @@ iOS/macOS Code/project samples demonstrating features of the YubiKey 5.8, using 
 
 ```text
 iOS/
-├── previewSign/             # The previewSign extension proposed WebAuthn extension 
+├── previewSign/             # The previewSign extension proposed WebAuthn extension
+├── device-identity/          # PPUAT (Persistent PIN UV Auth Token)
 ├── prf-hmac-secret/          # hmac-secret-mc (PRF)
 ├── third-party-payments/     # thirdPartyPayment, credProtect, and credBlob
 ├── yubikey-management/       # GetInfo, discovery, pin
-├── WebAuthnInterceptor/       # iOS/macOS app with embedded WKWebView
+├── WebAuthnInterceptor/       # iOS/macOS app with embedded WKWebView and WebAuthn interceptor
 
 ```
 
 ## Quickstarts
-A few of the quickstarts below share the same sample project (WebAuthnInterceptorSample) that is an iOS/macOS app with an embedded WKWebView that allows you to interact with some of the newer features via the web and the YubiKey 5.8 like preview signing, prf, and others.
+A few of the quickstarts below share the same sample project (`WebAuthnInterceptorSample`) that is an iOS/macOS app with an embedded WKWebView that allows you to interact with some of the newer features via the web and the YubiKey 5.8 like preview signing, prf, and others.
 
-[README](WebAuthnInterceptorSample/README.md) for the WebAuthnInterceptorSample
+WebAuthnInterceptorSample [README](WebAuthnInterceptorSample/README.md)
+
+---
 
 ### PreviewSign (Signing preview)
 
@@ -40,17 +43,49 @@ The `previewSign` extension is a [proposed WebAuthn extension](https://yubicolab
 
 ---
 
-### prf-hmac-secret (hmac-secret-mc)
+### device-identity (PPUAT - Persistent PIN UV Auth Token)
 
-#### <COMING SOON>(COMING SOON)
+Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `encCredStoreState` decryption and cross-session token reuse. These are the primitives that support conditional mediation for hardware security keys.
+
+- Persistent PIN UV Auth Token (PPUAT)
+- Persistent Credential Management Read Only (PCMR)
+- `encIdentifier`
+- `encCredStoreState`
+
+#### README <COMING SOON>(COMING SOON)
+---
+
+### prf-hmac-secret (hmac-secret-mc)
+Derives a 32-byte secret during MakeCredential using the hmac-secret-mc extension. On firmware 5.8 this completes in a single user interaction instead of requiring a separate GetAssertion call.
+
+- `hmac-secret-mc`
+#### README <COMING SOON>(COMING SOON)
 ---
 
 ### third-party-payments
+Creates a payment credential with thirdPartyPayment, locks it down with credProtect so every use requires PIN or biometric and stores a card label on the key with credBlob. Then runs a simulated merchant checkout.
 
-#### <COMING SOON>(COMING SOON)
+- `thirdPartyPayment`
+- `credBlob`
+- `credProtect`
+#### README <COMING SOON>(COMING SOON)
 ---
 
 ### yubikey-management (getInfo mostly and pin mgmnt)
 
-#### <COMING SOON>(COMING SOON)
+- #### FIDO over CCID 
+    CTAP commands transported over ISO 7816 / USB CCID Handled at the platform layer; the Yubico iOS Swift SDK utilizes the CCID transport automatically when available.
+
+- #### GetInfo discovery
+
+    Reads AuthenticatorInfo fields supported in firmware 5.8. No credentials are created and no PIN or touch is needed.
+    - `maxPINLength`
+    - `pinComplexityPolicy`
+    - `pinComplexityPolicyURL`
+    - `uvCountSinceLastPinEntry`
+    - `attestationFormats`
+    - `transportsForReset`
+    - `longTouchForReset`
+
+#### README <COMING SOON>(COMING SOON)
 ---
