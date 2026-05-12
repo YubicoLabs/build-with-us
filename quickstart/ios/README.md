@@ -6,7 +6,7 @@ iOS/macOS Code/project samples demonstrating features of the YubiKey 5.8, using 
 
 | Requirement | Details |
 |---|---|
-| Yubico Swift SDK | Release 1.3.0 or later ([download](https://github.com/Yubico/yubikit-swift/tree/release/1.3.0)) |
+| Yubico Swift SDK | Release 1.3.0 or later ([download](https://github.com/Yubico/yubikit-swift/releases/tag/v1.3.0)) |
 | YubiKey | Firmware 5.8 or later. |
 | FIDO2 PIN | A PIN must be set on the YubiKey to run most of these examples. You can do this in the YubiKey Authenticator, available on the [macOS App Store](https://apps.apple.com/us/app/yubico-authenticator/id1497506650?mt=12) |
 | Xcode ([latest](https://apps.apple.com/us/app/xcode/id497799835?mt=12)) | For building and running the quickstart examples/demos on a realy iOS device or mac running macOS |
