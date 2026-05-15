@@ -12,38 +12,35 @@ Before diving into the code, ensure you have:
 1.  **5.8.0 EAP Hardware:** A YubiKey with the 5.8.0 beta firmware.
 2.  **Yubico Authenticator**: [macOS](https://apps.apple.com/us/app/yubico-authenticator/id1497506650?mt=12) | [Windows](https://apps.microsoft.com/detail/9nfng39387k0?hl=en-US&gl=US)
 3.  **Latest SDK (Pre) releases:**
-    * **iOS:** Yubikit 5.0.0-beta+
+    * **iOS:** [Yubikit-swift 1.3.0](https://github.com/Yubico/yubikit-swift/releases/tag/v1.3.0)
     * **Android:** Yubikit 3.1.0
     * **Desktop:** .NET SDK 1.10.0-beta+
 
 ---
 
-## 🏗 Feature 1: Attestation of RSA Key Generation (ARKG)
+## 🏗 Feature 1: Asynchronous Remote Key Generation (ARKG)
 
 ARKG creates public keys without a YubiKey attached. Please follow the encompassed code.
 
 Important files and folders:
 | Platform | Path | Primary Class/Method |
 | :--- | :--- | :--- |
-| **iOS** | [`/ios`](./ios) | `YKFKeyAttestationTask` |
+| **iOS** | [`/ios`](./ios) |  |
 | **Android** | [`/android`](./android) | `ArkgSession.java` |
 | **.NET** | [`/arkg-dotnet`](./dotnet) | `YubiKeyDevice.CreateArkgAttestation()` |
 
-**Key Developer Task:** Review the `createCredentials` and `assertCredentials` logic in these demos to see how the different parts play together.
 
 ---
 
-## 👤 Feature 2: Physical User Auth Template (PUAT)
+## 👤 Feature 2: Persistent PIN User Access Token (PPUAT)
 
-PUAT allows you to define complex "User Presence" rules. You can now programmatically require a touch, a PIN, or a biometric match for specific cryptographic slots.
+PPUATs enable a better user experience by allowing applications to list discoverable credentials from YubiKeys without requiring repeated PIN entry.
 
 | Platform | Path | Focus Area |
 | :--- | :--- | :--- |
-| **iOS** | [`/ios`](./ios) | UI-triggered hardware touch prompts. |
-| **Android** | [`/android`](./android) | Managing template persistence. |
-| **.NET** | [`/dotnet`](./dotnet) | Defining custom auth policies via CLI/SDK. |
-
-**Key Developer Task:** Check the policy definitions in the `Config` files to see how to toggle `TouchPolicy` and `PinPolicy` flags.
+| **iOS** | [`/ios`](./ios) | TBD |
+| **Android** | [`/android`](./android) | TBD |
+| **.NET** | [`/dotnet`](./dotnet) | TBD |
 
 ---
 
@@ -51,8 +48,7 @@ PUAT allows you to define complex "User Presence" rules. You can now programmati
 
 1.  **Clone** this repository.
 2.  Navigate to the specific platform folder (e.g., `cd quickstart/dotnet`).
-3.  Follow the local `README.md` in that sub-folder for build instructions (CocoaPods, Gradle, or NuGet setup).
-4.  Plug in your 5.8.0 YubiKey and run the "Debug" target.
+3.  Follow the local `README.md` in that sub-folder for build instructions (Swift Package Manager, Gradle, or NuGet setup).
 
 ---
 
