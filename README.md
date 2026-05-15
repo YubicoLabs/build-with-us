@@ -17,8 +17,12 @@ This firmware update isn't just a patch; it’s a toolkit expansion for modern a
 ### 🔐 Asynchronous Remote Key Generation (ARKG)
 ARKG allows applications to generate public keys cryptographically linked to a credential on a YubiKey without having said YubiKey present. Only on signature creation the YubiKey is needed.
 
-### 🧱 Physical User Auth Template (PUAT)
-PUAT enables more granular control over user presence and verification. Developers can now define hardware-level policies for how and when a user must interact with the key to authorize a cryptographic operation.
+### 🧱 Persistent PIN User Access Token (PPUAT)
+YubiKeys with firmware version 5.8 and later support CTAP 2.2's Persistent PinUvAuthToken (PPUAT)
+A new type of access token that can be acquired via PIN Protocol v2.
+
+PPUATs enable a better user experience by allowing applications to list discoverable credentials from YubiKeys without requiring repeated PIN entry.
+
 
 ### 📈 Expanded Storage & Logic
 * **FIDO2:** Increased capacity for up to 100 resident keys (discoverable credentials).
