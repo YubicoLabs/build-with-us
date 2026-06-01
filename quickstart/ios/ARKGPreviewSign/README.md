@@ -28,7 +28,7 @@ Each function call in this app is sourced from one of four places:
 ## Prerequisites
 
 - Physical YubiKey 5.8 (NFC or USB-C)
-- The **patched** YubiKit SDK at `../yubikit-swift` (see [SDK patches](#sdk-patches) below)
+- The **patched** YubiKit SDK at `../yubikit-swift`
 - Xcode 15+, iOS 17+ device or macOS 14+ Mac
 
 ---
@@ -39,7 +39,7 @@ Each function call in this app is sourced from one of four places:
 
 1. Build registration options 
 
-    `ARKGViewModel.generateKey()` [[CODE](https://github.com/dmennis/ARKGQuickstart/blob/6ec4de1273dc72ad51a80b3db9c356c2227120ff/ARKGQuickstart/ARKGViewModel.swift#L54)]
+    `ARKGViewModel.generateKey()` [[CODE](https://github.com/YubicoLabs/early-access-program/blob/d587dc907941586044760721fb1c0e9832eaeeaf/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKGViewModel.swift#L71)]
 
 2. Run the registration ceremony 
 
@@ -80,7 +80,7 @@ Each function call in this app is sourced from one of four places:
 
 **NOTE** ARKG is a key generation scheme where the authenticator (YubiKey) delegates generation of public keys to an external party (in this case, our demo app), but without giving access to the corresponding private keys. 
 
-1. Parse the ARKG root key pair out of `GeneratedKey.publicKey` [[CODE](https://github.com/dmennis/ARKGQuickstart/blob/6ec4de1273dc72ad51a80b3db9c356c2227120ff/ARKGQuickstart/ARKGViewModel.swift#L72)]
+1. Parse the ARKG root key pair out of `GeneratedKey.publicKey` [[CODE](https://github.com/YubicoLabs/early-access-program/blob/d587dc907941586044760721fb1c0e9832eaeeaf/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKGViewModel.swift#L101)]
 
     ***NOTE:*** `GeneratedKey.publicKey` is a CBOR map with a custom key type (`kty = -65537`) that neither CryptoKit nor YubiKit's standard COSE parser handles. `ARKGCOSEKey.parse` decodes it manually using `MiniCBOR` **[App]** and returns two 65-byte uncompressed P-256 points (`04 || x || y`).
 
@@ -93,7 +93,7 @@ Each function call in this app is sourced from one of four places:
     | `-1` | EC2 sub-map | `pkBl` — blinding public key |
     | `-2` | EC2 sub-map | `pkKem` — KEM public key |
 
-2. Derive N keys (5 in this quickstart) `ARKG.derivePublicKey` [[CODE](https://github.com/dmennis/ARKGQuickstart/blob/6ec4de1273dc72ad51a80b3db9c356c2227120ff/ARKGQuickstart/ARKGViewModel.swift#L73)]
+2. Derive N keys (5 in this quickstart) `ARKG.derivePublicKey` [[CODE](https://github.com/YubicoLabs/early-access-program/blob/d587dc907941586044760721fb1c0e9832eaeeaf/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKGViewModel.swift#L94)]
 
     ***NOTE:*** `ARKG.derivePublicKey` Implements the ARKG-P256 offline derivation algorithm:
 
@@ -115,7 +115,7 @@ Each function call in this app is sourced from one of four places:
 
 ---
 
-## Step C: Sign with a derived key (YubiKit-Swift) [[CODE](https://github.com/dmennis/ARKGQuickstart/blob/6ec4de1273dc72ad51a80b3db9c356c2227120ff/ARKGQuickstart/ARKGViewModel.swift#L88)]
+## Step C: Sign with a derived key (YubiKit-Swift) [[CODE](https://github.com/YubicoLabs/early-access-program/blob/d587dc907941586044760721fb1c0e9832eaeeaf/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKGViewModel.swift#L119)]
 
 **Goal:** Ask the YubiKey to sign a message using ONE specific derived key.
 
@@ -160,7 +160,7 @@ let signature = authResponse.clientExtensionResults     // [YubiKit]
 
 ---
 
-## Step D: Verify the signature offline [[CODE](https://github.com/dmennis/ARKGQuickstart/blob/6ec4de1273dc72ad51a80b3db9c356c2227120ff/ARKGQuickstart/ARKGViewModel.swift#L121)]
+## Step D: Verify the signature offline [[CODE](https://github.com/YubicoLabs/early-access-program/blob/d587dc907941586044760721fb1c0e9832eaeeaf/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKGViewModel.swift#L162)]
 
 **Goal:** Confirm the signature is valid against the derived public key; No YubiKey needed.
 
