@@ -18,11 +18,11 @@ iOS/macOS Code/project samples demonstrating features of the YubiKey 5.8, using 
 ```text
 iOS/
 ├── previewSign/             # The previewSign extension proposed WebAuthn extension
-├── device-identity/          # PPUAT (Persistent PIN UV Auth Token)
-├── prf-hmac-secret/          # hmac-secret-mc (PRF)
-├── third-party-payments/     # thirdPartyPayment, credProtect, and credBlob
-├── yubikey-management/       # GetInfo, discovery, pin
-├── WebAuthnInterceptor/       # iOS/macOS app with embedded WKWebView and WebAuthn interceptor
+├── ARKGPreviewSign/         # The previewSign macOS/iOS demo with ARKG key generation
+├── device-identity/         # Enhance UX using PPUAT (Persistent PIN UV Auth Token)
+├── third-party-payments/    # thirdPartyPayment, credProtect, and credBlob
+├── yubikey-management/      # GetInfo, discovery, pin
+├── WebAuthnInterceptor/     # iOS/macOS app with embedded WKWebView and WebAuthn interceptor
 
 ```
 
@@ -33,13 +33,24 @@ WebAuthnInterceptorSample [README](WebAuthnInterceptorSample/README.md)
 
 ---
 
-### PreviewSign (Signing preview)
+### PreviewSign (Browswer-based Signing Preview)
 
 The `previewSign` extension is a [proposed WebAuthn extension](https://yubicolabs.github.io/webauthn-sign-extension/4/#sctn-sign-extension) that supports hardware-backed ECDSA P-256 signing over application-defined data.
 
 - `previewSign`
 
 [README](previewSign/README.md) &#183; [Code](WebAuthnInterceptorSample/WebAuthnInterceptorSample/WebAuthnHandler.swift)
+
+
+---
+
+### ARKGPreviewSign (Native macOS/iOS App)
+
+ARKGPreviewSign is a standalone native macOS/iOS app that demonstrates The `previewSign` extension with ARKG key generaion and hardware-backed ECDSA P-256 signing.
+
+- `ARKGPreviewSign`
+
+[README](ARKGPreviewSign/README.md)
 
 ---
 
@@ -55,13 +66,6 @@ Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `
 #### README <COMING SOON>(COMING SOON)
 ---
 
-### prf-hmac-secret (hmac-secret-mc)
-Derives a 32-byte secret during MakeCredential using the hmac-secret-mc extension. On firmware 5.8 this completes in a single user interaction instead of requiring a separate GetAssertion call.
-
-- `hmac-secret-mc`
-#### README <COMING SOON>(COMING SOON)
----
-
 ### third-party-payments
 Creates a payment credential with thirdPartyPayment, locks it down with credProtect so every use requires PIN or biometric and stores a card label on the key with credBlob. Then runs a simulated merchant checkout.
 
@@ -71,10 +75,10 @@ Creates a payment credential with thirdPartyPayment, locks it down with credProt
 #### README <COMING SOON>(COMING SOON)
 ---
 
-### yubikey-management (getInfo mostly and pin mgmnt)
+### yubikey-management (getInfo mostly and pin management)
 
 - #### FIDO over CCID 
-    CTAP commands transported over ISO 7816 / USB CCID Handled at the platform layer; the Yubico iOS Swift SDK utilizes the CCID transport automatically when available.
+    CTAP commands transported over ISO 7816 / USB CCID Handled at the platform layer; the Yubico iOS Swift SDK utilizes the CCID transport by default when available.
 
 - #### GetInfo discovery
 

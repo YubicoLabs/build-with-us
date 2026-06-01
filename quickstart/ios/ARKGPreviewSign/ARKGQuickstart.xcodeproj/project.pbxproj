@@ -1,0 +1,555 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		042B91333AF33690C7D0F32E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EACA09440EDA841D6735EF /* ContentView.swift */; };
+		045E6995DDB2BE45AAD3AE91 /* FidoUI in Frameworks */ = {isa = PBXBuildFile; productRef = D92CA55A0CEA21EC2B73FAB1 /* FidoUI */; };
+		04C2F4D360BE70E6415A30A4 /* P256Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634C431E48C93D75920727EC /* P256Arithmetic.swift */; };
+		10758783759FDFF6F890D8B7 /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = 443F02FF61CEC20C4AED01DF /* YubiKit */; };
+		1397596C97DB273A55BD2634 /* ARKG.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74005045AE396E981238158 /* ARKG.swift */; };
+		329EBE52DD2E8181669CB96D /* ARKGViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC3BC6BED4CAA4B68EC388 /* ARKGViewModel.swift */; };
+		37D86F5C3CEB86483B7ADE64 /* InProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C79F2F2BDC08816C92F967 /* InProgressView.swift */; };
+		3BB7F80833DE1B1B3F55A49F /* FidoUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4C984E936BBB43B34571FF82 /* FidoUI */; };
+		3F7F4A544D919DDA05F0FF51 /* ARKGQuickstartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC9E4CAE7B1D115D2183CA3 /* ARKGQuickstartApp.swift */; };
+		41795221146198323B061DB7 /* ARKGQuickstartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC9E4CAE7B1D115D2183CA3 /* ARKGQuickstartApp.swift */; };
+		438B4D7ED18907690E9E3530 /* ARKG.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74005045AE396E981238158 /* ARKG.swift */; };
+		4AB022EE4BD65F8C9DE2CCD5 /* SignatureResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333A6D9CB5F2D5EE367BD19 /* SignatureResultView.swift */; };
+		4F099038DF6F04D8E83017F5 /* InProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C79F2F2BDC08816C92F967 /* InProgressView.swift */; };
+		5F4F3A1943981AEC2A320401 /* MiniCBOR.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD3B499620F0AC12E339523 /* MiniCBOR.swift */; };
+		672F577BD63017BAC3430334 /* P256Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634C431E48C93D75920727EC /* P256Arithmetic.swift */; };
+		6C07E82517D3B608B1309B0E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EACA09440EDA841D6735EF /* ContentView.swift */; };
+		7007A1B172596F88B7A60FDD /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = 24A8155FFC5C2E29D739A4F4 /* YubiKit */; };
+		78ACC9057BB8AAB8786D7C0E /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4646ABC9D983A5177BDEA3 /* ComposeMessageView.swift */; };
+		815B3907A79B87706DF0E455 /* SignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569E3487DA43C1D7B9791843 /* SignatureView.swift */; };
+		870D9C7A06A8FF23A9E3F704 /* MiniCBOR.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD3B499620F0AC12E339523 /* MiniCBOR.swift */; };
+		908FD1F0BB4199629F5E3DC2 /* DerivedKeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C67A3B80467A224A67789 /* DerivedKeysView.swift */; };
+		9585E8F7D3B0C26675E09904 /* RegisteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B8A1CCF40FCF8E2A2263C /* RegisteredView.swift */; };
+		AD255FC9849DAE14A1340B3B /* SignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569E3487DA43C1D7B9791843 /* SignatureView.swift */; };
+		C0F300E231020B1BA99C81EF /* ARKGViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC3BC6BED4CAA4B68EC388 /* ARKGViewModel.swift */; };
+		C6BB547D30688B1A41D65868 /* ARKGCOSEKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCFB198CF21E5ADFA40C58C /* ARKGCOSEKey.swift */; };
+		D285B275BC6ED6F44BD85994 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4646ABC9D983A5177BDEA3 /* ComposeMessageView.swift */; };
+		DBAF6ABA2F9577AB5058C9B9 /* ARKGCOSEKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCFB198CF21E5ADFA40C58C /* ARKGCOSEKey.swift */; };
+		E2BD530B2AED05E482FD6EFD /* SignatureResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333A6D9CB5F2D5EE367BD19 /* SignatureResultView.swift */; };
+		FC1FD4E0758038876CEB85A5 /* RegisteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B8A1CCF40FCF8E2A2263C /* RegisteredView.swift */; };
+		FD00B57B88B99BF4CAE7B7AF /* DerivedKeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C67A3B80467A224A67789 /* DerivedKeysView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		141276359C66C144DB7D7D8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		146905A808EC6C9A31FAC705 /* ARKGQuickstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARKGQuickstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BCFB198CF21E5ADFA40C58C /* ARKGCOSEKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKGCOSEKey.swift; sourceTree = "<group>"; };
+		2735E769283E0357C1E6DA54 /* ARKGQuickstart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ARKGQuickstart.entitlements; sourceTree = "<group>"; };
+		2DC9E4CAE7B1D115D2183CA3 /* ARKGQuickstartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKGQuickstartApp.swift; sourceTree = "<group>"; };
+		4A217496ACC17CA92C739787 /* ARKGQuickstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARKGQuickstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		513C67A3B80467A224A67789 /* DerivedKeysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedKeysView.swift; sourceTree = "<group>"; };
+		5333A6D9CB5F2D5EE367BD19 /* SignatureResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureResultView.swift; sourceTree = "<group>"; };
+		569E3487DA43C1D7B9791843 /* SignatureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureView.swift; sourceTree = "<group>"; };
+		593B8A1CCF40FCF8E2A2263C /* RegisteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisteredView.swift; sourceTree = "<group>"; };
+		634C431E48C93D75920727EC /* P256Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = P256Arithmetic.swift; sourceTree = "<group>"; };
+		6D4646ABC9D983A5177BDEA3 /* ComposeMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMessageView.swift; sourceTree = "<group>"; };
+		7DB0E2462E59B9EB1864CBC1 /* yubikit-swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "yubikit-swift"; path = "../yubikit-swift"; sourceTree = SOURCE_ROOT; };
+		94E30DCEFCD1E219C678E5B9 /* FidoUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FidoUI; path = "../yubikit-swift/Samples/WebAuthnInterceptorSample/FidoUI"; sourceTree = SOURCE_ROOT; };
+		94EACA09440EDA841D6735EF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		98C79F2F2BDC08816C92F967 /* InProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressView.swift; sourceTree = "<group>"; };
+		ADDC3BC6BED4CAA4B68EC388 /* ARKGViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKGViewModel.swift; sourceTree = "<group>"; };
+		CAD3B499620F0AC12E339523 /* MiniCBOR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniCBOR.swift; sourceTree = "<group>"; };
+		D74005045AE396E981238158 /* ARKG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKG.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A19B63E6A236CDB76F7837ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10758783759FDFF6F890D8B7 /* YubiKit in Frameworks */,
+				045E6995DDB2BE45AAD3AE91 /* FidoUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D92D4CF61FCBED9BB71F2492 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7007A1B172596F88B7A60FDD /* YubiKit in Frameworks */,
+				3BB7F80833DE1B1B3F55A49F /* FidoUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1802B8C82E7C6244AC28E3A2 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				94E30DCEFCD1E219C678E5B9 /* FidoUI */,
+				7DB0E2462E59B9EB1864CBC1 /* yubikit-swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		2012E301317738B04D501700 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4A217496ACC17CA92C739787 /* ARKGQuickstart.app */,
+				146905A808EC6C9A31FAC705 /* ARKGQuickstart.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41526B5C47FE3618A0FCDF85 /* ARKG */ = {
+			isa = PBXGroup;
+			children = (
+				D74005045AE396E981238158 /* ARKG.swift */,
+				1BCFB198CF21E5ADFA40C58C /* ARKGCOSEKey.swift */,
+				CAD3B499620F0AC12E339523 /* MiniCBOR.swift */,
+				634C431E48C93D75920727EC /* P256Arithmetic.swift */,
+			);
+			path = ARKG;
+			sourceTree = "<group>";
+		};
+		4E8A2FB880EE717201470731 /* ARKGQuickstart */ = {
+			isa = PBXGroup;
+			children = (
+				2735E769283E0357C1E6DA54 /* ARKGQuickstart.entitlements */,
+				2DC9E4CAE7B1D115D2183CA3 /* ARKGQuickstartApp.swift */,
+				ADDC3BC6BED4CAA4B68EC388 /* ARKGViewModel.swift */,
+				94EACA09440EDA841D6735EF /* ContentView.swift */,
+				141276359C66C144DB7D7D8E /* Info.plist */,
+				41526B5C47FE3618A0FCDF85 /* ARKG */,
+				9640FC9290C71C8862F48D25 /* Views */,
+			);
+			path = ARKGQuickstart;
+			sourceTree = "<group>";
+		};
+		9640FC9290C71C8862F48D25 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6D4646ABC9D983A5177BDEA3 /* ComposeMessageView.swift */,
+				513C67A3B80467A224A67789 /* DerivedKeysView.swift */,
+				98C79F2F2BDC08816C92F967 /* InProgressView.swift */,
+				593B8A1CCF40FCF8E2A2263C /* RegisteredView.swift */,
+				5333A6D9CB5F2D5EE367BD19 /* SignatureResultView.swift */,
+				569E3487DA43C1D7B9791843 /* SignatureView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A4EC0C790B8362A8C717BE37 = {
+			isa = PBXGroup;
+			children = (
+				4E8A2FB880EE717201470731 /* ARKGQuickstart */,
+				1802B8C82E7C6244AC28E3A2 /* Packages */,
+				2012E301317738B04D501700 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A25F6D146A01CCBF524B62C /* ARKGQuickstart_macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 42DEE13292D42F5EC2401F1E /* Build configuration list for PBXNativeTarget "ARKGQuickstart_macOS" */;
+			buildPhases = (
+				D30017941E4271FDA524913E /* Sources */,
+				D92D4CF61FCBED9BB71F2492 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ARKGQuickstart_macOS;
+			packageProductDependencies = (
+				24A8155FFC5C2E29D739A4F4 /* YubiKit */,
+				4C984E936BBB43B34571FF82 /* FidoUI */,
+			);
+			productName = ARKGQuickstart_macOS;
+			productReference = 146905A808EC6C9A31FAC705 /* ARKGQuickstart.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C5FBD9E209B91980FB45CCD4 /* ARKGQuickstart_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91B99B2A38B3948BAEA7B327 /* Build configuration list for PBXNativeTarget "ARKGQuickstart_iOS" */;
+			buildPhases = (
+				FF68F7A3EAA0B82EBFE26624 /* Sources */,
+				A19B63E6A236CDB76F7837ED /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ARKGQuickstart_iOS;
+			packageProductDependencies = (
+				443F02FF61CEC20C4AED01DF /* YubiKit */,
+				D92CA55A0CEA21EC2B73FAB1 /* FidoUI */,
+			);
+			productName = ARKGQuickstart_iOS;
+			productReference = 4A217496ACC17CA92C739787 /* ARKGQuickstart.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C4F6879BED6DB9AB826A12ED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 01C5C4F699394C6CF110E21C /* Build configuration list for PBXProject "ARKGQuickstart" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A4EC0C790B8362A8C717BE37;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4E730E53E5406967AF784D13 /* XCLocalSwiftPackageReference "../yubikit-swift/Samples/WebAuthnInterceptorSample/FidoUI" */,
+				86FFED9B1FB2B893C5F21E38 /* XCLocalSwiftPackageReference "../yubikit-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2012E301317738B04D501700 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C5FBD9E209B91980FB45CCD4 /* ARKGQuickstart_iOS */,
+				3A25F6D146A01CCBF524B62C /* ARKGQuickstart_macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D30017941E4271FDA524913E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				438B4D7ED18907690E9E3530 /* ARKG.swift in Sources */,
+				C6BB547D30688B1A41D65868 /* ARKGCOSEKey.swift in Sources */,
+				41795221146198323B061DB7 /* ARKGQuickstartApp.swift in Sources */,
+				C0F300E231020B1BA99C81EF /* ARKGViewModel.swift in Sources */,
+				78ACC9057BB8AAB8786D7C0E /* ComposeMessageView.swift in Sources */,
+				6C07E82517D3B608B1309B0E /* ContentView.swift in Sources */,
+				FD00B57B88B99BF4CAE7B7AF /* DerivedKeysView.swift in Sources */,
+				37D86F5C3CEB86483B7ADE64 /* InProgressView.swift in Sources */,
+				870D9C7A06A8FF23A9E3F704 /* MiniCBOR.swift in Sources */,
+				04C2F4D360BE70E6415A30A4 /* P256Arithmetic.swift in Sources */,
+				FC1FD4E0758038876CEB85A5 /* RegisteredView.swift in Sources */,
+				4AB022EE4BD65F8C9DE2CCD5 /* SignatureResultView.swift in Sources */,
+				815B3907A79B87706DF0E455 /* SignatureView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FF68F7A3EAA0B82EBFE26624 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1397596C97DB273A55BD2634 /* ARKG.swift in Sources */,
+				DBAF6ABA2F9577AB5058C9B9 /* ARKGCOSEKey.swift in Sources */,
+				3F7F4A544D919DDA05F0FF51 /* ARKGQuickstartApp.swift in Sources */,
+				329EBE52DD2E8181669CB96D /* ARKGViewModel.swift in Sources */,
+				D285B275BC6ED6F44BD85994 /* ComposeMessageView.swift in Sources */,
+				042B91333AF33690C7D0F32E /* ContentView.swift in Sources */,
+				908FD1F0BB4199629F5E3DC2 /* DerivedKeysView.swift in Sources */,
+				4F099038DF6F04D8E83017F5 /* InProgressView.swift in Sources */,
+				5F4F3A1943981AEC2A320401 /* MiniCBOR.swift in Sources */,
+				672F577BD63017BAC3430334 /* P256Arithmetic.swift in Sources */,
+				9585E8F7D3B0C26675E09904 /* RegisteredView.swift in Sources */,
+				E2BD530B2AED05E482FD6EFD /* SignatureResultView.swift in Sources */,
+				AD255FC9849DAE14A1340B3B /* SignatureView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1A34A7430E1F9115FE02E5DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ARKGQuickstart/ARKGQuickstart.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ARKGQuickstart/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.arkg-quickstart";
+				PRODUCT_NAME = ARKGQuickstart;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		30E68103198FCB58854603ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7777159AB63A2705D086E213 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ARKGQuickstart/ARKGQuickstart.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = FC263886LH;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ARKGQuickstart/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.arkg-quickstart";
+				PRODUCT_NAME = ARKGQuickstart;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "macOS Wildcard Provisioning Profile";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		981D9E38352148411A07F0C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ARKGQuickstart/ARKGQuickstart.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = FC263886LH;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ARKGQuickstart/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.arkg-quickstart";
+				PRODUCT_NAME = ARKGQuickstart;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "macOS Wildcard Provisioning Profile";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		ADE4E0629C6EB5D247D63545 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ARKGQuickstart/ARKGQuickstart.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ARKGQuickstart/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.arkg-quickstart";
+				PRODUCT_NAME = ARKGQuickstart;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DCB97796E1D6B7B0F2A0053F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01C5C4F699394C6CF110E21C /* Build configuration list for PBXProject "ARKGQuickstart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30E68103198FCB58854603ED /* Debug */,
+				DCB97796E1D6B7B0F2A0053F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		42DEE13292D42F5EC2401F1E /* Build configuration list for PBXNativeTarget "ARKGQuickstart_macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				981D9E38352148411A07F0C3 /* Debug */,
+				7777159AB63A2705D086E213 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		91B99B2A38B3948BAEA7B327 /* Build configuration list for PBXNativeTarget "ARKGQuickstart_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A34A7430E1F9115FE02E5DB /* Debug */,
+				ADE4E0629C6EB5D247D63545 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4E730E53E5406967AF784D13 /* XCLocalSwiftPackageReference "../yubikit-swift/Samples/WebAuthnInterceptorSample/FidoUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../yubikit-swift/Samples/WebAuthnInterceptorSample/FidoUI";
+		};
+		86FFED9B1FB2B893C5F21E38 /* XCLocalSwiftPackageReference "../yubikit-swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../yubikit-swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		24A8155FFC5C2E29D739A4F4 /* YubiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = YubiKit;
+		};
+		443F02FF61CEC20C4AED01DF /* YubiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = YubiKit;
+		};
+		4C984E936BBB43B34571FF82 /* FidoUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FidoUI;
+		};
+		D92CA55A0CEA21EC2B73FAB1 /* FidoUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FidoUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C4F6879BED6DB9AB826A12ED /* Project object */;
+}
