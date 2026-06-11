@@ -1,1 +1,8 @@
 .DS_STORE
+
+# Python build artifacts (keep source: rp.py, requirements.txt, README.md)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
