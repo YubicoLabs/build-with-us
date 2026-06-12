@@ -68,14 +68,11 @@ credential = auth_data.credential_data
 
 # PRF result:
 if result.client_extension_results.get("prf", {}).get("enabled"):
-    print("New credential created, with PRF")
+    print("New credential created, with the PRF extension.")
 else:
     # This fails on Windows, but we might still be able to use prf even if
     # the credential wasn't made with it, so keep going
-    print("Failed to create credential with PRF, it might not work")
-
-print("New credential created, with the PRF extension.")
-
+    print("Credential created, but PRF was not enabled (it might not work)")
 # If created with UV, keep using UV
 if auth_data.is_user_verified():
     uv = "required"
