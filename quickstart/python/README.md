@@ -24,11 +24,10 @@ The script for signing arbitrary data without the FIDO payload. Use that script 
 
 Use the PRF (HMAC) extension to return a random value cryptographically linked to the credential and a given value.
 
-### [example_ppuat.py](./example_ppuat.py)
+### example_ppuat.py (TBD)
 
 > [!NOTE]
-> Useful Implementation pending.
-
+> Useful implementation pending.
 ## 🛠 Prerequisites
 
 -   [**uv**](https://docs.astral.sh/uv/).
