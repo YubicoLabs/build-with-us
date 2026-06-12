@@ -44,7 +44,7 @@ from fido2.utils import sha256, websafe_decode, websafe_encode
 uv = "discouraged"
 
 # Locate a suitable FIDO authenticator
-client, info = get_client(
+client, _ = get_client(
     lambda info: PreviewSignExtension.NAME in info.extensions,
     extensions=[PreviewSignExtension()],
 )
