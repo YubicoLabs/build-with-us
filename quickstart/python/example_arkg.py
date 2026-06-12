@@ -26,9 +26,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Connects to the first FIDO device found which supports the sign extension,
-creates a new credential for it with the extension enabled, and uses it to
-derive two separate secrets.
+Connects to the first FIDO device found which supports the previewSign extension,
+creates a new credential with ARKG key generation enabled, derives a public key,
+and signs/verifies a message using the derived key.
 """
 
 import sys
