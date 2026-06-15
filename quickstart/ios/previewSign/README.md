@@ -96,12 +96,15 @@ Three things:
 
 The derived public key is a standard P-256 key. The verifier does not need to know about ARKG, previewSign, or the YubiKey. They just run standard ECDSA verification.
 
-## About PreviewSign Sample
+## About the WebAuthnInterceptorSample
 
-This quickstart uses the [WebAuthnInterceptorSample](../WebAuthnInterceptorSample/README.md) application with an embedded WKWebView and integrated Yubico Swift SDK release/1.3.0.
-The WebAuthnInterceptorSample can intercept WebAuthn calls and interacts directly with the YubiKey 5.8 via the release/1.3.0 of the Yubico Swift SDK. 
+This quickstart uses the [WebAuthnInterceptorSample](../WebAuthnInterceptorSample/README.md) — a native iOS/macOS app with an embedded WKWebView and the Yubico Swift SDK `release/1.3.0`. It monkey-patches `navigator.credentials.create()` and `navigator.credentials.get()` in the web view and routes them to a YubiKey over NFC, USB-C, or Lightning via the YubiKit SDK.
 
-Follow the WebAuthnInterceptorSample [README](../WebAuthnInterceptorSample/README.md) to get started. The app defaults to our Yubico demo website that has added support for demonstrating the preview signing extension.
+The four-step Flow above is **conceptual**. Method names like `DerivePublicKey` and `VerifySignature` describe what happens at each stage; they are not literal SDK calls (the YubiKit SDK exposes previewSign through extension inputs/outputs on `WebAuthn.Registration` and `WebAuthn.Authentication`, and ARKG derive/verify are application-side primitives — see [`ARKGPreviewSign/ARKGQuickstart/ARKG/ARKG.swift`](../ARKGPreviewSign/ARKGQuickstart/ARKG/ARKG.swift) for one implementation).
+
+In this quickstart, **the demo website's JavaScript drives all four steps** through standard WebAuthn extension fields. The Swift sample is a transparent CTAP2 router: it forwards the `previewSign` extension to the YubiKey for Steps A and C (the parts that need hardware) and decodes the extension results back into the page ([`Interceptor.js:82-92`](../WebAuthnInterceptorSample/WebAuthnInterceptorSample/Interceptor.js)). Derivation (Step B) and verification (Step D) run entirely in the browser and do not involve the YubiKey or the Swift app.
+
+The app defaults to our Yubico demo website, which has added UI for exercising the preview signing extension.
 
 ## Run the WebAuthnInterceptorSample
 
@@ -110,12 +113,16 @@ cd ../WebAuthnInterceptorSample
 xed .
 ```
 1. Build and run WebAuthnInterceptorSample on a physical iOS or macOS device
-2. The default url (https://demo.yubico.com/webauthn-developers) is loaded into the embedded WebView. 
+2. The default url (https://demo.yubico.com/webauthn-developers) is loaded into the embedded WebView.
 3. Scroll down to the bottom of the page, expand Extensions
 4. Scroll down to PreviewSign and select the checkbox
-5. Select CREATE
+5. Select CREATE — this exercises Step A (register + generate key)
+6. After registration, use the demo page's PreviewSign controls to derive a public key (Step B), sign a message (Step C), and verify the signature (Step D)
 
-Expected: The app should intercept the WebAuthn request and then prompt you to insert or tap a YubiKey.
+Expected behavior:
+- **CREATE** (Step A) — the app prompts you to insert or tap a YubiKey.
+- **Derive / Verify** (Steps B and D) — run entirely in the browser; no YubiKey prompt and no Swift involvement.
+- **Sign** (Step C) — the app prompts for YubiKey tap/insert to sign.
 
 ## References
 
