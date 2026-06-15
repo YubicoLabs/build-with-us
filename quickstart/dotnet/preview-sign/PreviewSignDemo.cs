@@ -360,31 +360,5 @@ namespace Quickstarts
 
             return Convert.FromBase64String(s);
         }
-
-        /// <summary>
-        /// Encodes the ESP256-split-ARKG <c>additionalArgs</c> map for a
-        /// previewSign GetAssertion: <c>{ 3: -65539, -1: arkgKeyHandle, -2: context }</c>.
-        /// The YubiKey receives this value unchanged.
-        /// </summary>
-        private static byte[] EncodeArkgSignArgs(byte[] arkgKeyHandle, byte[] context)
-        {
-            var cbor = new System.Formats.Cbor.CborWriter(
-                System.Formats.Cbor.CborConformanceMode.Ctap2Canonical,
-                convertIndefiniteLengthEncodings: true);
-
-            cbor.WriteStartMap(3);
-
-            cbor.WriteInt32(3);
-            cbor.WriteInt32((int)ArkgP256Esp256);
-
-            cbor.WriteInt32(-1);
-            cbor.WriteByteString(arkgKeyHandle);
-
-            cbor.WriteInt32(-2);
-            cbor.WriteByteString(context);
-
-            cbor.WriteEndMap();
-            return cbor.Encode();
-        }
     }
 }

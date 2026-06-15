@@ -86,7 +86,11 @@ def do_derive(cbor, CoseKey, public_key_b64: str = "", context: str = "", ikm_he
     """Step B: derive a unique public key from the seed key, offline."""
 
     if public_key_b64:
-        seed_public_key = _decode(public_key_b64)
+        try:
+            seed_public_key = _decode(public_key_b64)
+        except Exception:
+            print("\n  Error: --public-key is not valid base64url.")
+            sys.exit(1)
     else:
         seed_public_key = _prompt_bytes(
             "Paste the seedPublicKey from your client's Step A:"
@@ -99,7 +103,14 @@ def do_derive(cbor, CoseKey, public_key_b64: str = "", context: str = "", ikm_he
         print("  Make sure you copied the full value from your client.")
         sys.exit(1)
 
-    ikm = bytes.fromhex(ikm_hex) if ikm_hex else os.urandom(32)
+    if ikm_hex:
+        try:
+            ikm = bytes.fromhex(ikm_hex)
+        except ValueError:
+            print("\n  Error: --ikm must be a hex string (e.g. 64 hex chars for 32 bytes).")
+            sys.exit(1)
+    else:
+        ikm = os.urandom(32)
     ctx = (context or "quickstart-context").encode("utf-8")
 
     derived_key, sign_args = pk.derive_public_key(ikm, ctx)
@@ -129,7 +140,11 @@ def do_verify(cbor, CoseKey, public_key_b64: str = "", message: str = "", signat
     # Ask for signature first - it was just printed by the client in Step C.
     # derivedPublicKey comes second - user scrolls up to Step B output.
     if signature_b64:
-        signature = _decode(signature_b64)
+        try:
+            signature = _decode(signature_b64)
+        except Exception:
+            print("\n  Error: --signature is not valid base64url.")
+            sys.exit(1)
     else:
         signature = _prompt_bytes(
             "Paste the signature from your client's Step C:"
@@ -142,7 +157,11 @@ def do_verify(cbor, CoseKey, public_key_b64: str = "", message: str = "", signat
         )
 
     if public_key_b64:
-        derived_key_bytes = _decode(public_key_b64)
+        try:
+            derived_key_bytes = _decode(public_key_b64)
+        except Exception:
+            print("\n  Error: --public-key is not valid base64url.")
+            sys.exit(1)
     else:
         derived_key_bytes = _prompt_bytes(
             "Paste the derivedPublicKey from Step B:"

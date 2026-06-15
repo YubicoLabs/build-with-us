@@ -26,11 +26,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Connects to the first FIDO device found which supports the sign extension,
-creates a new credential for it with the extension enabled, and uses it to
-derive two separate secrets.
+Connects to the first FIDO device found which supports the previewSign extension,
+creates a new credential with ARKG key generation enabled, derives a public key,
+and signs/verifies a message using the derived key.
 """
 
+import os
 import sys
 
 from exampleutils import get_client
@@ -44,7 +45,7 @@ from fido2.utils import sha256, websafe_decode, websafe_encode
 uv = "discouraged"
 
 # Locate a suitable FIDO authenticator
-client, info = get_client(
+client, _ = get_client(
     lambda info: PreviewSignExtension.NAME in info.extensions,
     extensions=[PreviewSignExtension()],
 )
@@ -80,13 +81,15 @@ print("New credential created, with the sign extension.")
 # sign result:
 sign_result = result.client_extension_results.previewSign
 print("CREATE sign result", sign_result)
-sign_key = sign_result.generated_key
-if not sign_key:
+# On Windows, run from an admin terminal. Otherwise the native WebAuthn path
+# is used, which does not return the previewSign output and sign_result is None.
+if sign_result is None or sign_result.generated_key is None:
     print(
         "Failed to create credential with sign extension",
         result.client_extension_results,
     )
     sys.exit(1)
+sign_key = sign_result.generated_key
 
 # Extension output contains master public key
 pk = CoseKey.parse(
@@ -99,9 +102,11 @@ print("public key", pk)
 print("Blinding public key", pk.pk_bl)
 print("KEM public key", pk.pk_kem)
 
-# Arbitrary bytestring used for ctx, ikm
+# ctx is a label scoping the key to a purpose. ikm is the randomness that makes
+# each derived key unique and unlinkable, so it should be random (the ARKG spec
+# recommends at least 256 bits of entropy). Different ikm or ctx = different key.
 ctx = b"my-ctx-here"
-ikm = b"my-ikm-here"
+ikm = os.urandom(32)
 # Derived public key to verify with, and kh to send to Authenticator
 pk2, args = pk.derive_public_key(ikm, ctx)
 print("Derived public key", pk2)
