@@ -1,1 +1,5 @@
 .DS_STORE
+
+# Xcode user-specific state (per-developer, not for the repo)
+**/xcuserdata/
+**/*.xcuserstate
