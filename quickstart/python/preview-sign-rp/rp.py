@@ -28,33 +28,22 @@ IETF draft with no CFRG endorsement.
 """
 
 import argparse
+import base64
 import os
 import sys
 
-
-def _import_fido2():
-    """Import fido2 lazily so `--help` works before dependencies are installed."""
-    try:
-        from fido2 import cbor
-        from fido2.cose import CoseKey
-    except ImportError:
-        sys.exit(
-            "Error: python-fido2 is not installed.\n"
-            "Install it with:  pip install -r requirements.txt\n"
-        )
-    return cbor, CoseKey
+from fido2 import cbor
+from fido2.cose import CoseKey
 
 
 def _b64(data) -> str:
     """Encode bytes as base64url (no padding) - matches the WebAuthn JSON layer
     and the Android/iOS clients, so values are interchangeable across platforms."""
-    import base64
     return base64.urlsafe_b64encode(bytes(data)).decode("ascii").rstrip("=")
 
 
 def _decode(value: str) -> bytes:
     """Decode a base64url value from a client (padding is re-added if stripped)."""
-    import base64
     value = value.strip()
     padded = value + "=" * (-len(value) % 4)
     return base64.urlsafe_b64decode(padded)
@@ -82,7 +71,7 @@ def _prompt_str(prompt: str, default: str = "") -> str:
     return value if value else default
 
 
-def do_derive(cbor, CoseKey, public_key_b64: str = "", context: str = "", ikm_hex: str = ""):
+def do_derive(public_key_b64: str = "", context: str = "", ikm_hex: str = ""):
     """Step B: derive a unique public key from the seed key, offline."""
 
     if public_key_b64:
@@ -134,7 +123,7 @@ def do_derive(cbor, CoseKey, public_key_b64: str = "", context: str = "", ikm_he
     return derived_key_b64, sign_args_b64
 
 
-def do_verify(cbor, CoseKey, public_key_b64: str = "", message: str = "", signature_b64: str = ""):
+def do_verify(public_key_b64: str = "", message: str = "", signature_b64: str = ""):
     """Step D: verify a signature against a derived public key, offline."""
 
     # Ask for signature first - it was just printed by the client in Step C.
@@ -197,8 +186,6 @@ def do_verify(cbor, CoseKey, public_key_b64: str = "", message: str = "", signat
 
 def cmd_interactive():
     """Walk the user through Steps B and D interactively."""
-    cbor, CoseKey = _import_fido2()
-
     print()
     print("  previewSign RP helper")
     print("  ---------------------------------------------------------")
@@ -221,27 +208,27 @@ def cmd_interactive():
         if choice == "0":
             break
         elif choice == "1":
-            do_derive(cbor, CoseKey)
+            do_derive()
         elif choice == "2":
-            do_verify(cbor, CoseKey)
+            do_verify()
         else:
             print("  Please enter 0, 1, or 2.")
 
 
 def cmd_derive(args):
-    cbor, CoseKey = _import_fido2()
-    do_derive(cbor, CoseKey,
-              public_key_b64=args.public_key,
-              context=args.context,
-              ikm_hex=args.ikm or "")
+    do_derive(
+        public_key_b64=args.public_key,
+        context=args.context,
+        ikm_hex=args.ikm or "",
+    )
 
 
 def cmd_verify(args):
-    cbor, CoseKey = _import_fido2()
-    do_verify(cbor, CoseKey,
-              public_key_b64=args.public_key,
-              message=args.message,
-              signature_b64=args.signature)
+    do_verify(
+        public_key_b64=args.public_key,
+        message=args.message,
+        signature_b64=args.signature,
+    )
 
 
 def main():

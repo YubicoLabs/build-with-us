@@ -143,13 +143,12 @@ What the package does **not** provide, because these are relying-party concerns 
 
 ## Compatibility
 
-previewSign requires firmware 5.8+. The example checks for the `"previewSign"` extension and stops if it is missing. Some older beta firmware reports the extension as `"sign"` instead. The example detects that case and prints a note telling you to update, since this quickstart targets the `"previewSign"` name.
+previewSign requires firmware 5.8+. The example checks for the `"previewSign"` extension and stops if it is missing.
 
 ```csharp
 if (!authenticatorInfo.IsExtensionSupported(Extensions.PreviewSign))
 {
-    // Not supported under the previewSign name. The demo also checks
-    // for the older "sign" name here and warns to update the firmware.
+    // Extension not supported on this device.
     return;
 }
 ```

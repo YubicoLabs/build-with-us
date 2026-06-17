@@ -30,7 +30,7 @@ from .NET, Android, or iOS.
 | Requirement | Details |
 |---|---|
 | Python | 3.10 or later |
-| python-fido2 | A version with ARKG support (see [requirements.txt](requirements.txt)) |
+| python-fido2 | Installed via `pip install fido2` (see Setup below) |
 | A client | One of the quickstart clients to produce the values: [.NET](../../dotnet), [Android](../../android), [iOS](../../ios) |
 
 ### Setup
@@ -45,7 +45,7 @@ python -m venv .venv
 # macOS / Linux:
 source .venv/bin/activate
 
-pip install -r requirements.txt
+pip install fido2
 ```
 
 ## Running it

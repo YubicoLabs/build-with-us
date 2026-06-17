@@ -28,7 +28,7 @@
 //    Step D  Verify            Offline. Standard ECDSA P-256 verify
 //                              using the derived public key.
 //
-//  IMPORTANT — what the published Yubico.YubiKey package gives you:
+//  IMPORTANT: what the published Yubico.YubiKey package gives you:
 //    The SDK ships the on-device half of previewSign: enabling the
 //    extension, reading the generated key back, requesting a signature,
 //    and reading the signature back (Steps A and C below). It does NOT
@@ -92,14 +92,6 @@ namespace Quickstarts
                 if (!authenticatorInfo.IsExtensionSupported(Extensions.PreviewSign))
                 {
                     Console.WriteLine("\n---previewSign not supported (requires firmware 5.8+).---\n");
-
-                    bool hasOldName = authenticatorInfo.Extensions?.Contains("sign") == true;
-                    if (hasOldName)
-                    {
-                        Console.WriteLine("  NOTE: This key reports 'sign' instead of 'previewSign'.");
-                        Console.WriteLine("  You may need a newer beta firmware.\n");
-                    }
-
                     return;
                 }
 
@@ -206,7 +198,7 @@ namespace Quickstarts
                 Console.WriteLine("  Signing key pair generated.");
                 Console.WriteLine();
                 Console.WriteLine("  ┌─ Values from your YubiKey ──────────────────────────────────────────┐");
-                Console.WriteLine("  seedPublicKey (the ARKG seed key — pkBl + pkKem):");
+                Console.WriteLine("  seedPublicKey (the ARKG seed key, pkBl + pkKem):");
                 Console.WriteLine("  " + seedPublicKeyB64);
                 Console.WriteLine();
                 Console.WriteLine("  credentialId (kept automatically for Step C):");
@@ -215,7 +207,7 @@ namespace Quickstarts
                 Console.WriteLine();
 
                 // ═══════════════════════════════════════════════════════════
-                //  Step B: Derive Public Key — Python RP
+                //  Step B: Derive Public Key (Python RP)
                 //
                 //  We print a single-line command (no backslashes) so it can be
                 //  copied and pasted as-is into cmd, PowerShell, or bash. The
@@ -237,7 +229,7 @@ namespace Quickstarts
                 string? derivedPublicKeyB64 = Console.ReadLine()?.Trim();
                 if (string.IsNullOrEmpty(derivedPublicKeyB64))
                 {
-                    Console.WriteLine("  No derivedPublicKey provided — stopping here.");
+                    Console.WriteLine("  No derivedPublicKey provided. Stopping here.");
                     return;
                 }
 
@@ -245,7 +237,7 @@ namespace Quickstarts
                 string? arkgArgsB64 = Console.ReadLine()?.Trim();
                 if (string.IsNullOrEmpty(arkgArgsB64))
                 {
-                    Console.WriteLine("  No arkgArgs provided — stopping here.");
+                    Console.WriteLine("  No arkgArgs provided. Stopping here.");
                     Console.WriteLine("  Run the Python RP first, then re-run this demo.");
                     return;
                 }
@@ -275,13 +267,13 @@ namespace Quickstarts
                 byte[] message = Encoding.UTF8.GetBytes("Sign this document.");
                 Console.WriteLine("  Message:     \"" + Encoding.UTF8.GetString(message) + "\"");
 
-                // previewSign signs the input unaltered — hash the message
+                // previewSign signs the input unaltered, so hash the message
                 // before sending. The digest is what the YubiKey will sign.
                 byte[] tbs = SHA256.HashData(message);
 
                 var getAssertionParams = new GetAssertionParameters(relyingParty, clientDataHash);
-                // AllowCredential uses the FIDO2 credential ID (64 bytes) — identifies which credential.
-                // AddPreviewSignExtension uses generatedKey.KeyHandle (34 bytes) — the inner previewSign key handle.
+                // AllowCredential uses the FIDO2 credential ID (64 bytes): identifies which credential.
+                // AddPreviewSignExtension uses generatedKey.KeyHandle (34 bytes): the inner previewSign key handle.
                 // These are different values; mixing them up causes InvalidLength from the firmware.
                 getAssertionParams.AllowCredential(new CredentialId { Id = credentialId });
                 getAssertionParams.AddPreviewSignExtension(generatedKey.KeyHandle, tbs, additionalArgs);
@@ -307,11 +299,11 @@ namespace Quickstarts
                 Console.WriteLine();
 
                 // ═══════════════════════════════════════════════════════════
-                //  Step D: Verify Signature — Python RP
+                //  Step D: Verify Signature (Python RP)
                 //
                 //  Single-line command (no backslashes) so it pastes cleanly
                 //  into cmd, PowerShell, or bash. The Python RP verifies with
-                //  standard ECDSA P-256 — anyone with the derived public key
+                //  standard ECDSA P-256. Anyone with the derived public key
                 //  can verify, no YubiKey or secrets needed.
                 // ═══════════════════════════════════════════════════════════
                 Console.WriteLine("  STEP D: VERIFY SIGNATURE (Python RP)");
@@ -334,7 +326,7 @@ namespace Quickstarts
         }
 
         /// <summary>
-        /// Encodes bytes as base64url (RFC 4648 §5) — the URL-safe alphabet with
+        /// Encodes bytes as base64url (RFC 4648 section 5): the URL-safe alphabet with
         /// padding stripped. This is the same encoding the WebAuthn JSON layer
         /// uses, so values are interchangeable with the Android/iOS clients and
         /// the Python RP. Encoding is only for copy/paste transport between the

@@ -1,9 +1,0 @@
-# previewSign RP helper depends only on python-fido2.
-#
-# 2.2.0 is the first release with previewSign + ARKG support:
-#   "Add support for experimental previewSign extension"
-#   https://github.com/Yubico/python-fido2/releases/tag/2.2.0
-#
-# Pinned exactly because previewSign is experimental/draft — floating upward
-# risks breakage if the API changes in a future release.
-fido2==2.2.0

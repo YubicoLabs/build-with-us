@@ -12,7 +12,7 @@ python -m venv .venv
 # macOS / Linux
 source .venv/bin/activate
 
-pip install "fido2>=2.2.0"
+pip install fido2
 ```
 
 Then run a script like this:
@@ -32,6 +32,14 @@ Let us take a quick look at the scripts in this folder. These cover the same 5.8
 features as the other platforms, so for a deeper, language-agnostic explanation of
 each feature (when to use it, how it works, real-world use cases), see the linked
 .NET quickstart README for that feature.
+
+### [example_getinfo.py](./example_getinfo.py)
+
+Reads the authenticatorGetInfo response and prints the FIDO2 fields added in
+firmware 5.8 (PIN length and complexity, biometric-use tracking, reset policy,
+attestation formats). No PIN or touch required, so it is a good first script to run.
+
+> Learn more about the 5.8 getInfo fields: [.NET authenticator-config README](../dotnet/authenticator-config/README.md).
 
 ### [example_credentials.py](./example_credentials.py)
 
