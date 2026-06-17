@@ -1,5 +1,12 @@
 .DS_STORE
 
+# Python build artifacts (keep source: rp.py, README.md)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
 # Xcode user-specific state (per-developer, not for the repo)
 **/xcuserdata/
 **/*.xcuserstate

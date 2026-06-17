@@ -1,0 +1,153 @@
+# Copyright (c) 2024 Yubico AB
+# All rights reserved.
+#
+#   Redistribution and use in source and binary forms, with or
+#   without modification, are permitted provided that the following
+#   conditions are met:
+#
+#    1. Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#    2. Redistributions in binary form must reproduce the above
+#       copyright notice, this list of conditions and the following
+#       disclaimer in the documentation and/or other materials provided
+#       with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Connects to the first FIDO device found which supports the previewSign extension,
+creates a new credential with ARKG key generation enabled, derives a public key,
+and signs/verifies a message using the derived key.
+"""
+
+import os
+import sys
+
+from exampleutils import get_client
+
+from fido2 import cbor
+from fido2.cose import ESP256_SPLIT_ARKG_PLACEHOLDER, CoseKey
+from fido2.ctap2.extensions import PreviewSignExtension
+from fido2.server import Fido2Server
+from fido2.utils import sha256, websafe_decode, websafe_encode
+
+uv = "discouraged"
+
+# Locate a suitable FIDO authenticator
+client, _ = get_client(
+    lambda info: PreviewSignExtension.NAME in info.extensions,
+    extensions=[PreviewSignExtension()],
+)
+
+server = Fido2Server({"id": "example.com", "name": "Example RP"}, attestation="none")
+user = {"id": b"user_id", "name": "A. User"}
+
+# Prepare parameters for makeCredential
+create_options, state = server.register_begin(
+    user,
+    resident_key_requirement="discouraged",
+    user_verification=uv,
+    authenticator_attachment="cross-platform",
+)
+
+# Create a credential
+result = client.make_credential(
+    {
+        **create_options["publicKey"],
+        "extensions": {
+            PreviewSignExtension.NAME: {
+                "generateKey": {"algorithms": [ESP256_SPLIT_ARKG_PLACEHOLDER]}
+            }
+        },
+    }
+)
+
+# Complete registration
+auth_data = server.register_complete(state, result)
+credentials = [auth_data.credential_data]
+print("New credential created, with the sign extension.")
+
+# sign result:
+sign_result = result.client_extension_results.previewSign
+print("CREATE sign result", sign_result)
+# On Windows, run from an admin terminal. Otherwise the native WebAuthn path
+# is used, which does not return the previewSign output and sign_result is None.
+if sign_result is None or sign_result.generated_key is None:
+    print(
+        "Failed to create credential with sign extension",
+        result.client_extension_results,
+    )
+    sys.exit(1)
+sign_key = sign_result.generated_key
+
+# Extension output contains master public key
+pk = CoseKey.parse(
+    cbor.decode(websafe_decode(sign_key["publicKey"]))
+)  # COSE key in bytes
+print("public key", pk)
+
+# Master public key contains blinding and KEM keys
+# ARKG derive_public_key uses these
+print("Blinding public key", pk.pk_bl)
+print("KEM public key", pk.pk_kem)
+
+# ctx is a label scoping the key to a purpose. ikm is the randomness that makes
+# each derived key unique and unlinkable, so it should be random (the ARKG spec
+# recommends at least 256 bits of entropy). Different ikm or ctx = different key.
+ctx = b"my-ctx-here"
+ikm = os.urandom(32)
+# Derived public key to verify with, and kh to send to Authenticator
+pk2, args = pk.derive_public_key(ikm, ctx)
+print("Derived public key", pk2)
+print("COSE_Sign_Args for derived key", args)
+
+# Prepare a message to sign
+message = b"New message"
+ph_data = sha256(message)
+
+# Prepare parameters for getAssertion
+request_options, state = server.authenticate_begin(credentials, user_verification=uv)
+
+
+# Authenticate the credential
+result = client.get_assertion(
+    {
+        **request_options["publicKey"],
+        # Add extension outputs. We have only 1 credential in allowCredentials
+        "extensions": {
+            PreviewSignExtension.NAME: {
+                "signByCredential": {
+                    websafe_encode(credentials[0].credential_id): {
+                        "keyHandle": sign_key.key_handle,
+                        "tbs": ph_data,
+                        "additionalArgs": cbor.encode(args),
+                    },
+                },
+            }
+        },
+    }
+)
+
+# Only one cred in allowCredentials, only one response.
+result = result.get_response(0)
+
+sign_result = result.client_extension_results[PreviewSignExtension.NAME]
+print("GET sign result", sign_result)
+
+# Response contains a signature over message
+signature = sign_result.get("signature")
+
+print("Test verify signature", signature)
+pk2.verify(message, websafe_decode(signature))
+print("Signature verified with derived public key!")

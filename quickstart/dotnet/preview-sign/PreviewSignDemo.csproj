@@ -9,8 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\common\Quickstarts.Common.csproj" />
-    <!-- Local NuGet package built from the SDK fork with previewSign support.
-         The package is served from the local-previewsign feed in NuGet.Config. -->
-    <PackageReference Include="Yubico.YubiKey" Version="1.15.1-previewsign" />
+    <!-- previewSign shipped in the official Yubico.YubiKey 1.17.0 release. -->
+    <PackageReference Include="Yubico.YubiKey" Version="1.17.0" />
   </ItemGroup>
 </Project>
