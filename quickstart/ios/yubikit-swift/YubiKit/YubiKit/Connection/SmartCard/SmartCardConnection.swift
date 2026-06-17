@@ -1,0 +1,65 @@
+// Copyright Yubico AB
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import Foundation
+
+/// An interface defining a SmartCard based connection to a YubiKey.
+///
+/// Use a connection to create a ``Session``. The connection can also be used for sending raw APDUs to the YubiKey.
+///
+/// Protocol implemented in `LightningSmartCardConnection` (iOS Lightning port), `NFCSmartCardConnection` (iOS NFC),
+/// and ``USBSmartCardConnection`` (macOS/iOS USB-C).
+
+public protocol SmartCardConnection: Connection {
+
+    /// Create a new SmartCardConnection to the YubiKey.
+    ///
+    /// Initialize a SmartCardConnection to get a connection to a YubiKey.
+    /// The init method will wait until a connection to a YubiKey has been established.
+    ///
+    /// The init will throw with ``SmartCardConnectionError/busy`` if there is an already established connection
+    /// for the same resource.
+    init() async throws(SmartCardConnectionError)
+
+    /// Create a new SmartCardConnection to the YubiKey.
+    ///
+    /// Call this method to get a connection to a YubiKey. The method will wait
+    /// until a connection to a YubiKey has been established and then return it.
+    ///
+    /// > Warning: Only one connection can exist at a time. If this method is called while
+    /// another connection is active or pending, it will throw ``SmartCardConnectionError/busy``.
+    /// The existing connection must be closed first using ``Connection/close(error:)``.
+    static func makeConnection() async throws(SmartCardConnectionError) -> Self
+
+    /*
+    /// Send an APDU to the SmartCardConnection.
+    ///
+    /// This will send the APDU to the YubiKey using the SmartCardConnection. Commands returning data to big
+    /// to be handled by a single read operation will be handled automatically by the SDK and the
+    /// complete result will be returned by the function. Only operations returning a 0x9000 status
+    /// code will return data. Operations returning a 0x61XX (more data) status code will be handled
+    /// by the SDK until they finish with a 0x9000 or an error. For all other status codes an error
+    /// with the response status will be thrown.
+    @discardableResult
+    func send(apdu: APDU) async throws -> Data
+     */
+
+    /// Send a command as Data to the SmartCardConnection and handle the result manually.
+    ///
+    /// This will send the Data to the YubiKey using the SmartCardConnection. The full result will be
+    /// returned as Data. If the returned data is to big for a single read operation this has
+    /// to be handled manually.
+    @discardableResult
+    func send(data: Data) async throws(SmartCardConnectionError) -> Data
+}

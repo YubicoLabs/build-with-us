@@ -1,0 +1,64 @@
+name: DocC Preview per Pull Request
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  contents: write       # allow push to gh-pages
+
+concurrency: preview-${{ github.ref }}  # keeps one run per-PR
+
+env:
+  DOCS_PATH: ./docs
+  PREVIEW_BRANCH: gh-pages
+  UMBRELLA_DIR: .
+
+jobs:
+  pr-preview:
+    name: PR DocC Preview
+    runs-on: macos-26-xlarge
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+
+      # build only when the PR isn’t being closed
+      - name: Build Docs
+        if: ${{ github.event.action != 'closed' }}
+        run: |
+          xcodebuild docbuild \
+            -scheme YubiKit \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath .build
+
+          $(xcrun --find docc) process-archive \
+            transform-for-static-hosting .build/Build/Products/Debug-iphonesimulator/YubiKit.doccarchive \
+            --output-path ${{ env.DOCS_PATH }} \
+            --hosting-base-path yubikit-swift/pr-${{ github.event.number }}/
+
+      - name: Redirect root to documentation
+        if: ${{ github.event.action != 'closed' }}
+        run: |
+          cat > "${{ env.DOCS_PATH }}/index.html" <<'HTML'
+          <!doctype html>
+          <meta http-equiv="refresh" content="0; url=./documentation/yubikit">
+          HTML
+
+      # always run – auto decides deploy vs remove
+      - name: Deploy / Remove PR preview
+        uses: rossjrw/pr-preview-action@9f77b1d057b494e662c50b8ca40ecc63f21e0887 # v1.6.2
+        with:
+          source-dir: ${{ env.DOCS_PATH }}
+          preview-branch: ${{ env.PREVIEW_BRANCH }}
+          umbrella-dir: .
+          token: ${{ secrets.GITHUB_TOKEN }}
+          comment: false
+          action: auto

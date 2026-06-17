@@ -1,0 +1,53 @@
+name: Build and Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Build and Test (macOS & iOS)
+    runs-on: macos-26-xlarge
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+
+      - name: Check lint rules
+        id: lint
+        shell: bash
+        run: |
+          xcrun swift-format lint . \
+          --parallel \
+          --recursive \
+          --strict
+
+      - name: Build and run tests (macOS)
+        run: swift test -v --parallel
+
+      - name: List available simulators
+        run: xcrun simctl list devices
+
+      - name: Find iOS Simulator
+        id: simulator
+        run: |
+          set -euo pipefail
+          UDID="$(
+            xcrun simctl list devices |
+            grep -E 'iPhone.*\(' |
+            head -n 1 |
+            sed -nE 's/.*\(([0-9A-F-]{36})\).*/\1/p'
+          )"
+          test -n "$UDID" || { echo "No iOS Simulator found"; exit 1; }
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Found iOS Simulator with UDID: $UDID"
+
+      - name: Build and run unit tests (iOS Simulator)
+        run: |
+          xcodebuild test \
+          -scheme YubiKitTests \
+          -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}" \
+          CODE_SIGNING_ALLOWED=NO
