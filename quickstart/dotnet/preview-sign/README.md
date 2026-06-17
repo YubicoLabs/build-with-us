@@ -161,7 +161,10 @@ First, set up the Python RP once:
 
 ```bash
 cd quickstart/python/preview-sign-rp
-pip install -r requirements.txt
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS / Linux: source .venv/bin/activate
+pip install fido2
 ```
 
 Then run the flow:
