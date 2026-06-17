@@ -14,7 +14,7 @@ Before diving into the code, ensure you have:
 3.  **Latest SDK (Pre) releases:**
     * **iOS:** [Yubikit-swift 1.3.0](https://github.com/Yubico/yubikit-swift/releases/tag/v1.3.0)
     * **Android:** Yubikit 3.1.0
-    * **Desktop:** .NET SDK 1.10.0-beta+
+    * **Desktop:** Yubico.YubiKey 1.17.0+ (.NET 8+)
     * **Python:** Python 3.10+
 
 ---

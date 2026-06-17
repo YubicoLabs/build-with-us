@@ -22,7 +22,7 @@
 //    Step B  Derive key        Offline. Produces a derived public key
 //                              (for verifiers) and an ARKG key handle,
 //                              also called a "ticket" (for signing).
-//    Step C  GetAssertion      Send credential ID + ticket + message.
+//    Step C  GetAssertion      Send credential ID + ticket + tbs (message digest).
 //                              YubiKey recreates the private key from
 //                              the ticket, signs, then discards it.
 //    Step D  Verify            Offline. Standard ECDSA P-256 verify
