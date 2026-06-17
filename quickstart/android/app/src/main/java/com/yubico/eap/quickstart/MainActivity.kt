@@ -55,6 +55,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackView
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
+import com.yubico.eap.quickstart.track.credentials.CredentialTrackView
+import com.yubico.eap.quickstart.track.credentials.CredentialTrackViewModel
 import com.yubico.eap.quickstart.track.signing.SigningTrackView
 import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.eap.quickstart.ui.YubicoGreen
@@ -109,6 +111,7 @@ class MainActivity : ComponentActivity() {
                         when (trackNumber) {
                             null -> SelectTrackView(
                                 tracks = listOf(
+                                    stringResource(R.string.track_credential),
                                     stringResource(R.string.track_sign),
                                     stringResource(R.string.track_arkg)
                                 )
@@ -116,14 +119,21 @@ class MainActivity : ComponentActivity() {
                                 vm.startTrack(it + 1)
                             }
 
-                            1 -> SigningTrackView(
+                            1 -> CredentialTrackView(
+                                vm.trackVm.value as CredentialTrackViewModel,
+                                onCopyToClipBoard = vm::copyToClipBoard
+                            ) {
+                                vm.trackNumber.value = null
+                            }
+
+                            2 -> SigningTrackView(
                                 vm.trackVm.value as SigningTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
-                            2 -> ARKGTrackView(
+                            3 -> ARKGTrackView(
                                 vm.trackVm.value as ARKGTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
