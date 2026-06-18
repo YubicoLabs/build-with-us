@@ -109,9 +109,9 @@ class CredentialTrackViewModel(
               "userVerification": "discouraged",
               "requireResidentKey": false
             },
-            "attestation": "none",
+            "attestation": "none"
         }
-        """
+        """.trimIndent()
 
         val credentialResultOption = client.makeCredential(
             origin = Origin("https://$domain"),
