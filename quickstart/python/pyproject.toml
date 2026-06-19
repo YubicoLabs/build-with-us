@@ -1,0 +1,10 @@
+[project]
+name = "EarlyAccessProgramScriptsPy"
+version = "0.0.1"
+description = "Learn more about python samples using the YubiKey 5.8."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fido2"
+]
+
