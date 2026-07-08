@@ -19,6 +19,7 @@
     <string name="track_one_success_signature_title">Signature</string>
     <string name="track_one_success_verified_title">Verified?</string>
     <string name="track_credential">Create A Credential</string>
+    <string name="track_info">YubiKey Information</string>
     <string name="track_sign">Signing and Verifying</string>
     <string name="track_arkg">Asynchronous Remote Key Generation</string>
 </resources>

@@ -6,15 +6,15 @@ plugins {
 android {
     namespace = "com.yubico.eap.quickstart"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
+        version = release(37) {
+            minorApiLevel = 0
         }
     }
 
     defaultConfig {
         applicationId = "com.yubico.eap.quickstart"
         minSdk = 31
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -48,6 +48,7 @@ dependencies {
 
     implementation(libs.logback)
     implementation(libs.bouncycastle)
+    implementation(libs.yubikit.android)
     implementation(libs.yubikit.fido.android.ui)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

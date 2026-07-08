@@ -1,5 +1,6 @@
 package com.yubico.eap.quickstart.track.arkg
 
+import android.app.Activity
 import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,7 @@ class ARKGTrackViewModel(
 
     lateinit var client: FidoClient
 
-    override suspend fun execute(client: FidoClient) {
+    override suspend fun execute(client: FidoClient, activity: Activity) {
         clearLogs()
 
         this.client = client
