@@ -1,5 +1,6 @@
 package com.yubico.eap.quickstart.track.credentials
 
+import android.app.Activity
 import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +47,7 @@ class CredentialTrackViewModel(
 
     val state: MutableState<State> = mutableStateOf(State.InProgress)
 
-    override suspend fun execute(client: FidoClient) {
+    override suspend fun execute(client: FidoClient, activity: Activity) {
         viewModelScope.launch {
             clearLogs()
             state.value = State.InProgress

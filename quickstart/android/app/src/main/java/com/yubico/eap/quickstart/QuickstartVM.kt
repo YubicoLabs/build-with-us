@@ -1,5 +1,6 @@
 package com.yubico.eap.quickstart
 
+import android.app.Activity
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -12,6 +13,7 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackViewModel
+import com.yubico.eap.quickstart.track.info.InfoTrackViewModel
 import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import kotlinx.coroutines.launch
@@ -29,12 +31,12 @@ class QuickstartVM(
     fun setup(activity: ComponentActivity) {
         fido = FidoClient(
             activity = activity,
-            extensions = listOf()
         )
     }
 
-    fun startTrack(trackIndex: Int) {
+    fun startTrack(trackIndex: Int, activity: Activity) {
         val newTrackVM = when (trackIndex) {
+            0 -> InfoTrackViewModel(application)
             1 -> CredentialTrackViewModel(application)
             2 -> SigningTrackViewModel(application)
             3 -> ARKGTrackViewModel(application)
@@ -46,7 +48,7 @@ class QuickstartVM(
         trackNumber.value = trackIndex
 
         viewModelScope.launch {
-            newTrackVM.execute(fido)
+            newTrackVM.execute(fido, activity)
         }
 
     }

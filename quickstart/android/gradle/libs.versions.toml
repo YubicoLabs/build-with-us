@@ -7,7 +7,7 @@ kotlin = "2.3.10"
 composeBom = "2026.03.00"
 
 logback = "3.0.0"
-yubikit = "3.1.0"
+yubikit = "3.2.0"
 bouncycastle = "1.83"
 
 [libraries]
@@ -24,6 +24,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 logback = { group = "com.github.tony19", name = "logback-android", version.ref = "logback" }
 
 yubikit-fido-android-ui = { group = "com.yubico.yubikit", name = "fido-android-ui", version.ref = "yubikit" }
+yubikit-android = { group = "com.yubico.yubikit", name = "android", version.ref = "yubikit" }
 bouncycastle = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncycastle" }
 
 [plugins]

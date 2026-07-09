@@ -57,6 +57,8 @@ import com.yubico.eap.quickstart.track.arkg.ARKGTrackView
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackView
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackViewModel
+import com.yubico.eap.quickstart.track.info.InfoTrackView
+import com.yubico.eap.quickstart.track.info.InfoTrackViewModel
 import com.yubico.eap.quickstart.track.signing.SigningTrackView
 import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.eap.quickstart.ui.YubicoGreen
@@ -111,12 +113,20 @@ class MainActivity : ComponentActivity() {
                         when (trackNumber) {
                             null -> SelectTrackView(
                                 tracks = listOf(
+                                    stringResource(R.string.track_info),
                                     stringResource(R.string.track_credential),
                                     stringResource(R.string.track_sign),
                                     stringResource(R.string.track_arkg)
                                 )
                             ) {
-                                vm.startTrack(it + 1)
+                                vm.startTrack(it, this@MainActivity)
+                            }
+
+                            0 -> InfoTrackView(
+                                vm.trackVm.value as InfoTrackViewModel,
+                                onCopyToClipBoard = vm::copyToClipBoard
+                            ) {
+                                vm.trackNumber.value = null
                             }
 
                             1 -> CredentialTrackView(
