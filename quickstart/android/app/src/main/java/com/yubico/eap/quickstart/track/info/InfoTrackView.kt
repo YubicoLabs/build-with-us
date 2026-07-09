@@ -170,10 +170,14 @@ private fun InformationRow(
 ) {
     Row(
         modifier = Modifier.clickable {
-            onCopyToClipBoard("$title\n${when(value){
-                is List<*> -> value.joinToString("\n")
-                else -> value
-            }}")
+            onCopyToClipBoard(
+                "$title\n${
+                    when (value) {
+                        is ByteArray -> value.toHexString()
+                        else -> value
+                    }
+                }"
+            )
         },
         verticalAlignment = Alignment.CenterVertically,
     ) {
