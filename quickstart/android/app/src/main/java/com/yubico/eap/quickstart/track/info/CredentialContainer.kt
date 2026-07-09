@@ -266,6 +266,7 @@ class CredentialContainer(
                     enterprise,
                     state,
                 )
+            client.close()
 
             Log.i(tagForLog, "Done, created $result.")
             operation.success(result)
@@ -300,8 +301,10 @@ class CredentialContainer(
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
         val session = Ctap2Session(connection)
+        val info = session.info
+        session.close()
 
-        operation.success(session.info)
+        operation.success(info)
     }
 
     private fun getWithSession(
@@ -334,6 +337,7 @@ class CredentialContainer(
                     enterprise,
                 )
 
+            client.close()
 
             Log.i(tagForLog, "Done, got $result.")
             operation.success(result)
