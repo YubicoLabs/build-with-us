@@ -465,7 +465,6 @@ class CredentialContainer(
     }
 }
 
-@Suppress("DEPRECATION")
 private fun Byte.toHumanReadable(): String =
     CtapException::class.java.declaredFields.filter {
         it.name.startsWith("ERR_")
