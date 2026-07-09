@@ -56,7 +56,7 @@ sealed class Operation(
 
     data class GetOperation(
         val options: PublicKeyCredentialRequestOptions,
-        val success: (credential: PublicKeyCredential, username: String) -> Unit,
+        val success: (credential: PublicKeyCredential) -> Unit,
         override val failure: (Throwable) -> Unit,
     ) : Operation(failure)
 }
@@ -143,7 +143,7 @@ class CredentialContainer(
 
     fun get(
         options: PublicKeyCredentialRequestOptions,
-        successCallback: (credential: PublicKeyCredential, username: String) -> Unit,
+        successCallback: (credential: PublicKeyCredential) -> Unit,
         failureCallback: (Throwable) -> Unit,
     ) {
         Log.i(tagForLog, "yubico get implementation called.")
@@ -335,9 +335,8 @@ class CredentialContainer(
                 )
 
 
-            val username = "unknown"
-            Log.i(tagForLog, "Done, got $result for user $username.")
-            operation.success(result, username)
+            Log.i(tagForLog, "Done, got $result.")
+            operation.success(result)
         } catch (ctap: CtapException) {
             Log.e(tagForLog, "Protocol exception: '${ctap.ctapError.toHumanReadable()}'.", ctap)
             operation.failure(ctap)
