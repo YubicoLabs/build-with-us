@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.UserInformationView
-import com.yubico.yubikit.fido.webauthn.PublicKeyCredentialParameters
 
 @Composable
 fun InfoTrackView(
@@ -199,13 +198,14 @@ private fun InformationRow(
                 ) {
                     for (it in value) {
                         when (it) {
-                            is PublicKeyCredentialParameters -> {
+                            is HashMap<*, *> -> {
+                                val line = it.map { (k, v) -> "$k: '$v'" }.joinToString(", ")
                                 Text(
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.End,
                                     fontFamily = FontFamily.Monospace,
                                     maxLines = 1,
-                                    text = "${it.type}: ${it.alg}"
+                                    text = line
                                 )
                             }
 
