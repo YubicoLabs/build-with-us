@@ -1,10 +1,6 @@
-<p align="center">
-  <img src="images/hero-image.png" alt="Yubico Early Access Program Hero Image">
-</p>
+<h1 align="center">Yubico BUild with Us 🚀</h1>
 
-<h1 align="center">Yubico Early Access Program: Firmware 5.8.0 Beta 🚀</h1>
-
-Welcome to the Yubico Early Access Program (EAP) developer repository. This space is dedicated to developers and security engineers who are ready to build, test, and integrate with the next generation of hardware security.
+Welcome to the Yubico developer repository. This space is dedicated to developers and security engineers who are ready to build, test, and integrate with the next generation of hardware security.
 
 We are currently previewing **Firmware 5.8.0**, a major update to the YubiKey 5 Series that introduces critical cryptographic enhancements and expanded storage capabilities.
 
