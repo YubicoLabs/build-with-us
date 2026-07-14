@@ -63,10 +63,15 @@ namespace PasskeyAutofill.App.Services
                 return ProtectedData.Unprotect(
                     encrypted, Entropy(deviceIdHex), DataProtectionScope.CurrentUser);
             }
-            catch (Exception)
+            catch (CryptographicException)
             {
                 // Decryption failed (wrong user, corrupt, or tampered). Remove and return null.
                 TryDeleteFile(path);
+                return null;
+            }
+            catch (Exception)
+            {
+                // Transient IO or access error. Keep the file; the token may still be good.
                 return null;
             }
         }

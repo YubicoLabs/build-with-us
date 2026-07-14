@@ -37,10 +37,18 @@ namespace PasskeyAutofill.App.ViewModels
             _canExecute = canExecute;
         }
 
+        // WPF can call these with null (e.g. the CommandManager's initial probe) or,
+        // in principle, a differently-typed parameter. Guard instead of casting blindly.
         public bool CanExecute(object? parameter) =>
-            _canExecute?.Invoke((T)parameter!) ?? true;
+            _canExecute is null || (parameter is T value && _canExecute(value));
 
-        public void Execute(object? parameter) => _execute((T)parameter!);
+        public void Execute(object? parameter)
+        {
+            if (parameter is T value)
+            {
+                _execute(value);
+            }
+        }
 
         public event EventHandler? CanExecuteChanged;
 

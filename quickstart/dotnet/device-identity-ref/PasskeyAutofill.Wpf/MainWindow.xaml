@@ -269,33 +269,6 @@
                                        Text="{Binding ThirdPartyPaymentText}" />
                         </Grid>
 
-                        <!-- PCMR scope check: attempts a delete with the read-only token -->
-                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0"
-                                    Visibility="{Binding HasIdentity, Converter={StaticResource BoolToVisibility}}">
-                            <ui:Button Content="Test read-only scope" Appearance="Secondary"
-                                       Command="{Binding ScopeCheckCommand}" />
-                            <ui:SymbolIcon Style="{StaticResource InfoHint}">
-                                <ui:SymbolIcon.ToolTip>
-                                    <TextBlock MaxWidth="260" TextWrapping="Wrap"
-                                               Text="The PPUAT stored on this PC is read-only. This button tries a credential delete to confirm the key rejects it." />
-                                </ui:SymbolIcon.ToolTip>
-                            </ui:SymbolIcon>
-                        </StackPanel>
-                        <TextBlock FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"
-                                   Text="{Binding ScopeStatus}"
-                                   Visibility="{Binding HasScopeStatus, Converter={StaticResource BoolToVisibility}}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="#3FB950" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ScopeIsWarning}" Value="True">
-                                            <Setter Property="Foreground" Value="#FF4444" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-
                     </StackPanel>
                 </ScrollViewer>
             </Border>

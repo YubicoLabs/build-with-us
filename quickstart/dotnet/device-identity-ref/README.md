@@ -29,7 +29,7 @@ software passkeys.
 | Feature | Where it shows up |
 |---|---|
 | PPUAT (long-lived read-only auth token) | One PIN, then silent reads, persisted across restarts |
-| PCMR (persistent read-only permission) | "Test read-only scope" tries a credential delete and shows the key rejecting it |
+| PCMR (persistent read-only permission) | The scope the PPUAT carries: it lists passkeys silently, but signing in still requires a fresh PIN and touch |
 | encIdentifier (stable, private device id) | Device ID row in the key details card. The raw value rotates on every `getInfo`, so only a PPUAT holder can resolve it |
 | encCredStoreState (change signal) | Status chip under the passkey list: "Served from cache" when unchanged (re-enumeration skipped), "Re-read from key" when it changed |
 
@@ -85,7 +85,6 @@ PasskeyAutofill.Core         no UI or storage dependencies; the copy-paste layer
 ├── PinKeyCollector.cs       bridges the SDK KeyCollector to IPinEntry
 ├── Passkey.cs               UI-ready credential DTO (includes thirdPartyPayment)
 ├── DeviceIdentity.cs        UI-ready snapshot of the 5.8 conditional-mediation fields
-├── ScopeProbeResult.cs      result of the read-only scope check
 ├── SignInResult.cs          result of an assertion verified locally
 ├── VaultResult.cs           result of a read (passkeys, identity, cache hit)
 └── VaultStatus.cs           Ready / NeedsPin / Unsupported / Error
@@ -146,9 +145,8 @@ dotnet run --project PasskeyAutofill.Wpf
 5. Click Sign in on a passkey and touch the key when it blinks: "Signed in,
    verified locally." If the app unlocked silently this session, it asks for
    your PIN once and then continues the sign-in: the read-only token can list
-   passkeys but cannot authorize an assertion.
-6. Test read-only scope: the delete is rejected because the PPUAT is read-only.
-7. Forget this PC: the next connect requires a PIN again. Changing the FIDO2 PIN
+   passkeys but cannot authorize an assertion. That is the PCMR scope at work.
+6. Forget this PC: the next connect requires a PIN again. Changing the FIDO2 PIN
    on the key also invalidates the stored token.
 
 ## SDK note

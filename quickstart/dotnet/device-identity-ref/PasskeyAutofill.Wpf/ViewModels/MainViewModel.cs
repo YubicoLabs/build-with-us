@@ -52,8 +52,6 @@ namespace PasskeyAutofill.App.ViewModels
         private string _cacheStatus = string.Empty;
         private bool _isCacheHit;
         private string _thirdPartyPaymentText = string.Empty;
-        private string _scopeStatus = string.Empty;
-        private bool _scopeIsWarning;
         private string _passkeyCountText = string.Empty;
         private bool _canForgetPc;
 
@@ -69,7 +67,6 @@ namespace PasskeyAutofill.App.ViewModels
             RetryCommand = new RelayCommand(async () => await RefreshAsync(), () => _key is not null);
             SignInCommand = new RelayCommand<Passkey>(async p => await SignInAsync(p), _ => _screen == "Unlocked");
             BackCommand = new RelayCommand(async () => await RefreshAsync(), () => _key is not null);
-            ScopeCheckCommand = new RelayCommand(async () => await ProbeScopeAsync(), () => _screen == "Unlocked");
             ForgetPcCommand = new RelayCommand(ForgetPc, () => _vault.HasPersistedToken);
 
             _monitor.Connected += OnConnected;
@@ -94,7 +91,6 @@ namespace PasskeyAutofill.App.ViewModels
         public RelayCommand RetryCommand { get; }
         public RelayCommand<Passkey> SignInCommand { get; }
         public RelayCommand BackCommand { get; }
-        public RelayCommand ScopeCheckCommand { get; }
         public RelayCommand ForgetPcCommand { get; }
 
         /// <summary>The passkeys shown in the picker / list.</summary>
@@ -112,7 +108,6 @@ namespace PasskeyAutofill.App.ViewModels
                     RetryCommand.RaiseCanExecuteChanged();
                     SignInCommand.RaiseCanExecuteChanged();
                     BackCommand.RaiseCanExecuteChanged();
-                    ScopeCheckCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -250,29 +245,6 @@ namespace PasskeyAutofill.App.ViewModels
             private set => SetProperty(ref _thirdPartyPaymentText, value);
         }
 
-        /// <summary>Inline result of the read-only scope probe, shown below its button.</summary>
-        public string ScopeStatus
-        {
-            get => _scopeStatus;
-            private set
-            {
-                if (SetProperty(ref _scopeStatus, value))
-                {
-                    OnPropertyChanged(nameof(HasScopeStatus));
-                }
-            }
-        }
-
-        /// <summary>True when there's a scope-probe result to show.</summary>
-        public bool HasScopeStatus => !string.IsNullOrEmpty(_scopeStatus);
-
-        /// <summary>True when the probe result is the unexpected (unsafe) outcome, shown red.</summary>
-        public bool ScopeIsWarning
-        {
-            get => _scopeIsWarning;
-            private set => SetProperty(ref _scopeIsWarning, value);
-        }
-
         /// <summary>True when a persisted token exists, so "Forget this PC" is offered.</summary>
         public bool CanForgetPc
         {
@@ -311,7 +283,6 @@ namespace PasskeyAutofill.App.ViewModels
             Passkeys.Clear();
             Message = string.Empty;
             HasIdentity = false;
-            ScopeStatus = string.Empty;
             Screen = "Disconnected";
         }
 
@@ -329,7 +300,6 @@ namespace PasskeyAutofill.App.ViewModels
 
             BusyText = "Working…";
             Screen = "Busy";
-            ScopeStatus = string.Empty;
             var key = _key;
 
             try
@@ -499,35 +469,6 @@ namespace PasskeyAutofill.App.ViewModels
         }
 
         /// <summary>
-        /// Attempts a delete with the read-only token and reports whether the key rejected it.
-        /// Runs off the UI thread.
-        /// </summary>
-        private async Task ProbeScopeAsync()
-        {
-            if (_key is null)
-            {
-                return;
-            }
-
-            BusyText = "Working…";
-            Screen = "Busy";
-            var key = _key;
-            ScopeProbeResult result = await Task.Run(() => _vault.ProbeScopeSafety(key));
-
-            // Don't put the UI back on Unlocked if the key went away mid-probe.
-            if (!ReferenceEquals(_key, key))
-            {
-                return;
-            }
-
-            ScopeIsWarning = !result.Rejected;
-            ScopeStatus = result.Rejected
-                ? "Confirmed: the key rejected the delete. The token is read-only."
-                : "Unexpected: the key allowed the delete. Please report this.";
-            Screen = "Unlocked";
-        }
-
-        /// <summary>
         /// Erases the persisted token and zeros the in-memory one.
         /// Returns to the Locked screen; the next connect requires a PIN.
         /// </summary>
@@ -539,7 +480,6 @@ namespace PasskeyAutofill.App.ViewModels
             CanForgetPc = false;
             Passkeys.Clear();
             HasIdentity = false;
-            ScopeStatus = string.Empty;
             PinStatus = string.Empty;
 
             if (_key is null)

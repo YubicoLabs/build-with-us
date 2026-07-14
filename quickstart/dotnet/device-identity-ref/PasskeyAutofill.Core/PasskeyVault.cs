@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using Yubico.YubiKey;
 using Yubico.YubiKey.Fido2;
@@ -25,7 +24,9 @@ namespace PasskeyAutofill.Core
     ///   PPUAT              GetPersistentPinUvAuthToken(): long-lived read-only auth token
     ///   encIdentifier      AuthenticatorIdentifier: stable, private device id
     ///   encCredStoreState  AuthenticatorCredStoreState: change signal for the credential store
-    ///   PCMR               read-only permission on the PPUAT (see <see cref="ProbeScopeSafety"/>)
+    ///   PCMR               the read-only permission the PPUAT carries. It can list
+    ///                      credentials but cannot delete them or authorize assertions,
+    ///                      which is why <see cref="SignIn"/> needs a fresh PIN and touch.
     ///
     /// The PPUAT is persisted only through the injected <see cref="IPpuatStore"/> and only
     /// when the user opts in. The WPF app uses Windows DPAPI; other platforms supply their own store.
@@ -94,6 +95,13 @@ namespace PasskeyAutofill.Core
                 if (result is not null)
                 {
                     return result;
+                }
+
+                // Keep the persisted copy, but scrub this in-memory instance unless the
+                // read adopted it into the session before failing (same array).
+                if (!ReferenceEquals(_persistentToken, stored))
+                {
+                    CryptographicOperations.ZeroMemory(stored);
                 }
             }
 
@@ -307,38 +315,6 @@ namespace PasskeyAutofill.Core
         }
 
         /// <summary>
-        /// Proves the PPUAT is read-only by attempting a credential delete with it.
-        /// The PCMR-scoped token cannot escalate to write permission, so the delete
-        /// must be rejected. No KeyCollector is set so no PIN escalation is possible.
-        /// </summary>
-        public ScopeProbeResult ProbeScopeSafety(IYubiKeyDevice key)
-        {
-            if (_persistentToken is null)
-            {
-                return ScopeProbeResult.NotApplicable(
-                    "Unlock the key first, then try the read-only scope check.");
-            }
-
-            CredentialId? target = _details.Values.FirstOrDefault()?.CredentialId;
-            if (target is null)
-            {
-                return ScopeProbeResult.NotApplicable(
-                    "No passkeys on this key. Register one first, then try the scope check.");
-            }
-
-            try
-            {
-                using var fido2 = new Fido2Session(key, persistentPinUvAuthToken: _persistentToken);
-                fido2.DeleteCredential(target);
-                return ScopeProbeResult.UnexpectedlyAllowed();
-            }
-            catch (Exception)
-            {
-                return ScopeProbeResult.RejectedAsExpected();
-            }
-        }
-
-        /// <summary>
         /// Zeros the in-memory token and erases all persisted tokens.
         /// The next connection will require a PIN.
         /// </summary>
@@ -389,7 +365,8 @@ namespace PasskeyAutofill.Core
                 {
                     using var fido2 = new Fido2Session(key, persistentPinUvAuthToken: token);
                     ReadOnlyMemory<byte>? id = fido2.AuthenticatorInfo.GetIdentifier(token);
-                    if (id is not null && Hex(id.Value.ToArray()) == deviceIdHex)
+                    if (id is not null && string.Equals(
+                        Hex(id.Value.ToArray()), deviceIdHex, StringComparison.OrdinalIgnoreCase))
                     {
                         return token;
                     }
@@ -470,6 +447,7 @@ namespace PasskeyAutofill.Core
 
         /// <summary>
         /// Queries the key's remaining PIN tries (CTAP getPinRetries, the same call the
+        /// Yubico Authenticator makes on every refresh). No PIN needed. Null on failure.
         /// </summary>
         private static int? TryGetPinRetries(IYubiKeyDevice key)
         {
