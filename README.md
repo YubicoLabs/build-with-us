@@ -1,4 +1,4 @@
-<h1 align="center">Yubico BUild with Us 🚀</h1>
+<h1 align="center">Yubico Build with Us 🚀</h1>
 
 Welcome to the Yubico developer repository. This space is dedicated to developers and security engineers who are ready to build, test, and integrate with the next generation of hardware security.
 
