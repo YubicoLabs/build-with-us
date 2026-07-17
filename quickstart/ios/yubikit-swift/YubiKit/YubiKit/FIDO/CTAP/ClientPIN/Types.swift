@@ -29,9 +29,42 @@ extension CTAP2 {
         /// The PIN/UV auth protocol version used to obtain this token.
         public let protocolVersion: ClientPin.ProtocolVersion
 
+        /// The raw token bytes.
+        ///
+        /// Exposed so a persistent token (PPUAT, acquired with
+        /// ``CTAP2/ClientPin/Permission/persistentCredentialManagement``) can be saved and later
+        /// restored via ``init(rawValue:protocolVersion:)`` for cross-session reuse without a new
+        /// PIN entry.
+        ///
+        /// - Important: This is sensitive key material. Persist it only in the Keychain
+        ///   (e.g. `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`), never in plaintext on disk.
+        public var rawValue: Data { tokenData }
+
         internal init(token: Data, protocolVersion: ClientPin.ProtocolVersion) {
             self.tokenData = token
             self.protocolVersion = protocolVersion
+        }
+
+        /// Reconstructs a token from previously persisted bytes (e.g. loaded from the Keychain).
+        ///
+        /// Use this to reuse a persistent token (PPUAT) across app launches: save
+        /// ``rawValue`` and ``protocolVersion``, then rebuild the token on next launch and pass it
+        /// to operations like ``CTAP2/Session/credentialManagement(token:)``.
+        ///
+        /// - Parameters:
+        ///   - rawValue: The raw token bytes previously obtained from ``rawValue``.
+        ///   - protocolVersion: The PIN/UV auth protocol version the token was obtained with.
+        /// - Returns: `nil` if `rawValue` is not a valid length for `protocolVersion`
+        ///   (v1: 16 or 32 bytes, v2: exactly 32 bytes).
+        public init?(rawValue: Data, protocolVersion: ClientPin.ProtocolVersion) {
+            guard Token.isValidSize(rawValue.count, for: protocolVersion) else { return nil }
+            self.tokenData = rawValue
+            self.protocolVersion = protocolVersion
+        }
+
+        /// Validates a decrypted token length. V1 allows 16 or 32 bytes; V2 requires exactly 32.
+        static func isValidSize(_ count: Int, for protocolVersion: ClientPin.ProtocolVersion) -> Bool {
+            protocolVersion == .v1 ? (count == 16 || count == 32) : count == 32
         }
 
         func authenticate(message: Data) -> Data {

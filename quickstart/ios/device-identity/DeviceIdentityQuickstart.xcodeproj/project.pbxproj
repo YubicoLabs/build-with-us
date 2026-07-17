@@ -1,0 +1,509 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BI0000000000000000000001 /* DeviceIdentityQuickstartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000001 /* DeviceIdentityQuickstartApp.swift */; };
+		BI0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000002 /* ContentView.swift */; };
+		BI0000000000000000000003 /* DeviceIdentityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000003 /* DeviceIdentityViewModel.swift */; };
+		BI0000000000000000000004 /* Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000004 /* Hex.swift */; };
+		BI0000000000000000000005 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000005 /* ConnectionManager.swift */; };
+		BI0000000000000000000006 /* PpuatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000006 /* PpuatStore.swift */; };
+		BI0000000000000000000007 /* KeychainPpuatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000007 /* KeychainPpuatStore.swift */; };
+		BI0000000000000000000008 /* DeviceIdentityCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000008 /* DeviceIdentityCache.swift */; };
+		BI0000000000000000000009 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000009 /* HomeView.swift */; };
+		BI000000000000000000000A /* PINEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000A /* PINEntryView.swift */; };
+		BI000000000000000000000B /* InProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000B /* InProgressView.swift */; };
+		BI000000000000000000000C /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000C /* DeviceInfoView.swift */; };
+		BI000000000000000000000D /* CredentialListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000D /* CredentialListView.swift */; };
+		BI000000000000000000000E /* ScopeProbeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000E /* ScopeProbeView.swift */; };
+		BI000000000000000000000F /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000F /* ResultView.swift */; };
+		BM0000000000000000000001 /* DeviceIdentityQuickstartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000001 /* DeviceIdentityQuickstartApp.swift */; };
+		BM0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000002 /* ContentView.swift */; };
+		BM0000000000000000000003 /* DeviceIdentityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000003 /* DeviceIdentityViewModel.swift */; };
+		BM0000000000000000000004 /* Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000004 /* Hex.swift */; };
+		BM0000000000000000000005 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000005 /* ConnectionManager.swift */; };
+		BM0000000000000000000006 /* PpuatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000006 /* PpuatStore.swift */; };
+		BM0000000000000000000007 /* KeychainPpuatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000007 /* KeychainPpuatStore.swift */; };
+		BM0000000000000000000008 /* DeviceIdentityCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000008 /* DeviceIdentityCache.swift */; };
+		BM0000000000000000000009 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0000000000000000000009 /* HomeView.swift */; };
+		BM000000000000000000000A /* PINEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000A /* PINEntryView.swift */; };
+		BM000000000000000000000B /* InProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000B /* InProgressView.swift */; };
+		BM000000000000000000000C /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000C /* DeviceInfoView.swift */; };
+		BM000000000000000000000D /* CredentialListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000D /* CredentialListView.swift */; };
+		BM000000000000000000000E /* ScopeProbeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000E /* ScopeProbeView.swift */; };
+		BM000000000000000000000F /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE000000000000000000000F /* ResultView.swift */; };
+		LF0000000000000000000001 /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = PD0000000000000000000001 /* YubiKit */; };
+		LF0000000000000000000002 /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = PD0000000000000000000002 /* YubiKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FE0000000000000000000001 /* DeviceIdentityQuickstartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityQuickstartApp.swift; sourceTree = "<group>"; };
+		FE0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FE0000000000000000000003 /* DeviceIdentityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityViewModel.swift; sourceTree = "<group>"; };
+		FE0000000000000000000004 /* Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hex.swift; sourceTree = "<group>"; };
+		FE0000000000000000000005 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		FE0000000000000000000006 /* PpuatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PpuatStore.swift; sourceTree = "<group>"; };
+		FE0000000000000000000007 /* KeychainPpuatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainPpuatStore.swift; sourceTree = "<group>"; };
+		FE0000000000000000000008 /* DeviceIdentityCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityCache.swift; sourceTree = "<group>"; };
+		FE0000000000000000000009 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000A /* PINEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PINEntryView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000B /* InProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000C /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000D /* CredentialListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialListView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000E /* ScopeProbeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeProbeView.swift; sourceTree = "<group>"; };
+		FE000000000000000000000F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		FE0000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FE0000000000000000000011 /* DeviceIdentityQuickstart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeviceIdentityQuickstart.entitlements; sourceTree = "<group>"; };
+		FE0000000000000000000012 /* yubikit-swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "yubikit-swift"; path = "../../yubico/5.8/early-access-program/quickstart/ios/yubikit-swift"; sourceTree = SOURCE_ROOT; };
+		FE0000000000000000000013 /* DeviceIdentityQuickstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeviceIdentityQuickstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE0000000000000000000014 /* DeviceIdentityQuickstart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeviceIdentityQuickstart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FP0000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LF0000000000000000000001 /* YubiKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FP0000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LF0000000000000000000002 /* YubiKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GR0000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				GR0000000000000000000002 /* DeviceIdentityQuickstart */,
+				GR0000000000000000000006 /* Packages */,
+				GR0000000000000000000007 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000002 /* DeviceIdentityQuickstart */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000011 /* DeviceIdentityQuickstart.entitlements */,
+				FE0000000000000000000010 /* Info.plist */,
+				FE0000000000000000000001 /* DeviceIdentityQuickstartApp.swift */,
+				FE0000000000000000000002 /* ContentView.swift */,
+				FE0000000000000000000003 /* DeviceIdentityViewModel.swift */,
+				FE0000000000000000000004 /* Hex.swift */,
+				GR0000000000000000000003 /* Connection */,
+				GR0000000000000000000004 /* Persistence */,
+				GR0000000000000000000005 /* Views */,
+			);
+			path = DeviceIdentityQuickstart;
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000003 /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000005 /* ConnectionManager.swift */,
+			);
+			path = Connection;
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000004 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000006 /* PpuatStore.swift */,
+				FE0000000000000000000007 /* KeychainPpuatStore.swift */,
+				FE0000000000000000000008 /* DeviceIdentityCache.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000005 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000009 /* HomeView.swift */,
+				FE000000000000000000000A /* PINEntryView.swift */,
+				FE000000000000000000000B /* InProgressView.swift */,
+				FE000000000000000000000C /* DeviceInfoView.swift */,
+				FE000000000000000000000D /* CredentialListView.swift */,
+				FE000000000000000000000E /* ScopeProbeView.swift */,
+				FE000000000000000000000F /* ResultView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000006 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000012 /* yubikit-swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		GR0000000000000000000007 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FE0000000000000000000013 /* DeviceIdentityQuickstart.app */,
+				FE0000000000000000000014 /* DeviceIdentityQuickstart.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TG0000000000000000000001 /* DeviceIdentity_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CL0000000000000000000002 /* Build configuration list for PBXNativeTarget "DeviceIdentity_iOS" */;
+			buildPhases = (
+				SP0000000000000000000001 /* Sources */,
+				FP0000000000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceIdentity_iOS;
+			packageProductDependencies = (
+				PD0000000000000000000001 /* YubiKit */,
+			);
+			productName = DeviceIdentity_iOS;
+			productReference = FE0000000000000000000013 /* DeviceIdentityQuickstart.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TG0000000000000000000002 /* DeviceIdentity_macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CL0000000000000000000003 /* Build configuration list for PBXNativeTarget "DeviceIdentity_macOS" */;
+			buildPhases = (
+				SP0000000000000000000002 /* Sources */,
+				FP0000000000000000000002 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceIdentity_macOS;
+			packageProductDependencies = (
+				PD0000000000000000000002 /* YubiKit */,
+			);
+			productName = DeviceIdentity_macOS;
+			productReference = FE0000000000000000000014 /* DeviceIdentityQuickstart.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PJ0000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = CL0000000000000000000001 /* Build configuration list for PBXProject "DeviceIdentityQuickstart" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = GR0000000000000000000001;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				PK0000000000000000000001 /* XCLocalSwiftPackageReference "../../yubico/5.8/early-access-program/quickstart/ios/yubikit-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = GR0000000000000000000007 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TG0000000000000000000001 /* DeviceIdentity_iOS */,
+				TG0000000000000000000002 /* DeviceIdentity_macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SP0000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BI0000000000000000000001 /* DeviceIdentityQuickstartApp.swift in Sources */,
+				BI0000000000000000000002 /* ContentView.swift in Sources */,
+				BI0000000000000000000003 /* DeviceIdentityViewModel.swift in Sources */,
+				BI0000000000000000000004 /* Hex.swift in Sources */,
+				BI0000000000000000000005 /* ConnectionManager.swift in Sources */,
+				BI0000000000000000000006 /* PpuatStore.swift in Sources */,
+				BI0000000000000000000007 /* KeychainPpuatStore.swift in Sources */,
+				BI0000000000000000000008 /* DeviceIdentityCache.swift in Sources */,
+				BI0000000000000000000009 /* HomeView.swift in Sources */,
+				BI000000000000000000000A /* PINEntryView.swift in Sources */,
+				BI000000000000000000000B /* InProgressView.swift in Sources */,
+				BI000000000000000000000C /* DeviceInfoView.swift in Sources */,
+				BI000000000000000000000D /* CredentialListView.swift in Sources */,
+				BI000000000000000000000E /* ScopeProbeView.swift in Sources */,
+				BI000000000000000000000F /* ResultView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SP0000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BM0000000000000000000001 /* DeviceIdentityQuickstartApp.swift in Sources */,
+				BM0000000000000000000002 /* ContentView.swift in Sources */,
+				BM0000000000000000000003 /* DeviceIdentityViewModel.swift in Sources */,
+				BM0000000000000000000004 /* Hex.swift in Sources */,
+				BM0000000000000000000005 /* ConnectionManager.swift in Sources */,
+				BM0000000000000000000006 /* PpuatStore.swift in Sources */,
+				BM0000000000000000000007 /* KeychainPpuatStore.swift in Sources */,
+				BM0000000000000000000008 /* DeviceIdentityCache.swift in Sources */,
+				BM0000000000000000000009 /* HomeView.swift in Sources */,
+				BM000000000000000000000A /* PINEntryView.swift in Sources */,
+				BM000000000000000000000B /* InProgressView.swift in Sources */,
+				BM000000000000000000000C /* DeviceInfoView.swift in Sources */,
+				BM000000000000000000000D /* CredentialListView.swift in Sources */,
+				BM000000000000000000000E /* ScopeProbeView.swift in Sources */,
+				BM000000000000000000000F /* ResultView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CF0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CF0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CF0000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeviceIdentityQuickstart/DeviceIdentityQuickstart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceIdentityQuickstart/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.device-identity-quickstart";
+				PRODUCT_NAME = DeviceIdentityQuickstart;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CF0000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeviceIdentityQuickstart/DeviceIdentityQuickstart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceIdentityQuickstart/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.device-identity-quickstart";
+				PRODUCT_NAME = DeviceIdentityQuickstart;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CF0000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeviceIdentityQuickstart/DeviceIdentityQuickstart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceIdentityQuickstart/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.device-identity-quickstart";
+				PRODUCT_NAME = DeviceIdentityQuickstart;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		CF0000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DeviceIdentityQuickstart/DeviceIdentityQuickstart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LQA3CS5MM7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceIdentityQuickstart/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yubico.device-identity-quickstart";
+				PRODUCT_NAME = DeviceIdentityQuickstart;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CL0000000000000000000001 /* Build configuration list for PBXProject "DeviceIdentityQuickstart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF0000000000000000000001 /* Debug */,
+				CF0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CL0000000000000000000002 /* Build configuration list for PBXNativeTarget "DeviceIdentity_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF0000000000000000000003 /* Debug */,
+				CF0000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CL0000000000000000000003 /* Build configuration list for PBXNativeTarget "DeviceIdentity_macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF0000000000000000000005 /* Debug */,
+				CF0000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		PK0000000000000000000001 /* XCLocalSwiftPackageReference "../../yubico/5.8/early-access-program/quickstart/ios/yubikit-swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../yubico/5.8/early-access-program/quickstart/ios/yubikit-swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PD0000000000000000000001 /* YubiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = YubiKit;
+		};
+		PD0000000000000000000002 /* YubiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = YubiKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = PJ0000000000000000000001 /* Project object */;
+}

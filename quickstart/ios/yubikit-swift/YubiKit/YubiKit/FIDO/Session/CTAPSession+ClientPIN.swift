@@ -231,11 +231,7 @@ private struct ClientPinHandler: Sendable {
                                 ciphertext: response.pinUVAuthToken
                             )
                             // Validate token size: V1 allows 16 or 32 bytes, V2 requires exactly 32.
-                            let validSize =
-                                pinProtocol == .v1
-                                ? (tokenData.count == 16 || tokenData.count == 32)
-                                : tokenData.count == 32
-                            guard validSize else {
+                            guard CTAP2.Token.isValidSize(tokenData.count, for: pinProtocol) else {
                                 throw CTAP2.SessionError.responseParseError(
                                     "Invalid token size: expected "
                                         + "\(pinProtocol == .v1 ? "16 or 32" : "32") bytes, "
