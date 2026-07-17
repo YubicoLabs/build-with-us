@@ -1,5 +1,9 @@
 <h1 align="center">Yubico Build with Us 🚀</h1>
 
+<p align="center">
+  <img src="images/build-with-us.png" alt="Yubico Build with Us" width="834" />
+</p>
+
 Welcome to the Yubico developer repository. This space is dedicated to developers and security engineers who are ready to build, test, and integrate with the next generation of hardware security.
 
 We are currently previewing **Firmware 5.8.0**, a major update to the YubiKey 5 Series that introduces critical cryptographic enhancements and expanded storage capabilities.
