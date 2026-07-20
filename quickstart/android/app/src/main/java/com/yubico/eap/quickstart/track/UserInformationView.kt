@@ -30,16 +30,17 @@ import com.yubico.eap.quickstart.ui.YubicoGreen
 fun UserInformationView(
     title: String,
     message: String,
-    informationItems: List<String>,
+    informationItems: List<String> = listOf(),
     confirmationButtonTitle: String = stringResource(android.R.string.cancel),
     onInformationSelected: ((index: Int) -> Unit)? = null,
     onCopyToClipBoard: ((String) -> Unit)? = null,
-    onFinished: () -> Unit,
+    onFinished: () -> Unit = {},
+    onConfirm: () -> Unit = onFinished,
 ) {
     AlertDialog(
         onDismissRequest = onFinished,
         confirmButton = {
-            Button(onClick = onFinished) {
+            Button(onClick = onConfirm) {
                 Text(confirmationButtonTitle)
             }
         },

@@ -149,6 +149,23 @@ class CredentialContainer(
             )
     }
 
+    fun getSession(
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (Ctap2Session) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico getinfo implementation called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetCtap2Session(
+                success = successCallback,
+                failure = {
+                    lastPinUsed = null
+                    failureCallback(it)
+                }
+            )
+    }
+
     fun get(
         options: PublicKeyCredentialRequestOptions,
         successCallback: (credential: PublicKeyCredential) -> Unit,
@@ -314,11 +331,15 @@ class CredentialContainer(
         operation: GetInfoOperation,
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
-        val session = Ctap2Session(connection)
-        val info = session.info
-        session.close()
+        try {
+            val session = Ctap2Session(connection)
+            val info = session.info
+            session.close()
 
-        operation.success(info)
+            operation.success(info)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
     }
 
     private fun getSessionWithDevice(
@@ -326,9 +347,13 @@ class CredentialContainer(
         operation: GetCtap2Session,
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
-        val session = Ctap2Session(connection)
+        try {
+            val session = Ctap2Session(connection)
 
-        operation.success(session)
+            operation.success(session)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
     }
 
     private fun getWithSession(
@@ -498,7 +523,7 @@ private fun Byte.toHumanReadable(): String =
         ?: "Unknown CTAP ERROR"
 
 
-private fun getClientOptions(
+fun getClientOptions(
     type: String,
     challenge: String,
     origin: String,

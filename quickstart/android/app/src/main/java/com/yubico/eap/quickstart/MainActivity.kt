@@ -59,6 +59,8 @@ import com.yubico.eap.quickstart.track.credentials.CredentialTrackView
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackViewModel
 import com.yubico.eap.quickstart.track.info.InfoTrackView
 import com.yubico.eap.quickstart.track.info.InfoTrackViewModel
+import com.yubico.eap.quickstart.track.ppuat.PpuatTrackView
+import com.yubico.eap.quickstart.track.ppuat.PpuatTrackViewModel
 import com.yubico.eap.quickstart.track.signing.SigningTrackView
 import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.eap.quickstart.ui.YubicoGreen
@@ -110,10 +112,12 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier.padding(innerPadding)
                     ) {
+                        var index = 0
                         when (trackNumber) {
                             null -> SelectTrackView(
                                 tracks = listOf(
                                     stringResource(R.string.track_info),
+                                    stringResource(R.string.track_ppuat),
                                     stringResource(R.string.track_credential),
                                     stringResource(R.string.track_sign),
                                     stringResource(R.string.track_arkg)
@@ -122,28 +126,35 @@ class MainActivity : ComponentActivity() {
                                 vm.startTrack(it, this@MainActivity)
                             }
 
-                            0 -> InfoTrackView(
+                            index++ -> InfoTrackView(
                                 vm.trackVm.value as InfoTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
-                            1 -> CredentialTrackView(
+                            index++ -> PpuatTrackView (
+                                vm.trackVm.value as PpuatTrackViewModel,
+                                onCopyToClipBoard = vm::copyToClipBoard
+                            ) {
+                                vm.trackNumber.value = null
+                            }
+
+                            index++ -> CredentialTrackView(
                                 vm.trackVm.value as CredentialTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
-                            2 -> SigningTrackView(
+                            index++ -> SigningTrackView(
                                 vm.trackVm.value as SigningTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
-                            3 -> ARKGTrackView(
+                            index++ -> ARKGTrackView(
                                 vm.trackVm.value as ARKGTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
