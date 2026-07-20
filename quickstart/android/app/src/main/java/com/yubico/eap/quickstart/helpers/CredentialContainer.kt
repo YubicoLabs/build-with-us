@@ -41,6 +41,8 @@ import kotlin.time.TimeSource
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 import com.yubico.eap.quickstart.logging.YOLOLogger.Companion as Log
 
+interface Pinless
+
 sealed class Operation(
     open val failure: (Throwable) -> Unit,
 ) {
@@ -52,7 +54,7 @@ sealed class Operation(
     data class GetInfoOperation(
         val success: (Ctap2Session.InfoData) -> Unit,
         override val failure: (Throwable) -> Unit,
-    ) : Operation(failure)
+    ) : Operation(failure), Pinless
 
     data class CreateOperation(
         val options: PublicKeyCredentialCreationOptions,
@@ -224,7 +226,7 @@ class CredentialContainer(
 
     private fun deviceConnected(device: YubiKeyDevice) {
         lastOperation?.let { operation ->
-            if (operation is GetInfoOperation) {
+            if (operation is Pinless) {
                 routeToCorrectMethodWithPin(operation, device, null)
             } else {
                 askForPin(operation, device)
