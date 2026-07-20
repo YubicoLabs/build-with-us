@@ -5,6 +5,8 @@ import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.yubico.eap.quickstart.helpers.DOMAIN
+import com.yubico.eap.quickstart.helpers.DOMAIN_NAME
 import com.yubico.eap.quickstart.helpers.DerivedPublicKey
 import com.yubico.eap.quickstart.helpers.encode64
 import com.yubico.eap.quickstart.helpers.extractSignature
@@ -57,20 +59,18 @@ class ARKGTrackViewModel(
 
         this.client = client
 
-        val domain = "demo.yubico.com"
-        val domainName = "Yubico Demo"
         val challenge = Random.nextBytes(32)
         val sampleUserId: String = UUID.randomUUID().toString()
 
         val requestJson = createSignCredentialCreateOption(
-            domain,
-            domainName,
+            DOMAIN,
+            DOMAIN_NAME,
             challenge,
             sampleUserId
         )
 
         val credentialResult = client.makeCredential(
-            origin = Origin("https://$domain"),
+            origin = Origin("https://$DOMAIN"),
             request = requestJson,
             clientDataHash = null, // let the SDK calculate
         )
@@ -104,12 +104,11 @@ class ARKGTrackViewModel(
         val message = "Hello World"
         val messageSha256 = message.toByteArray().sha256()
 
-        val domain = "demo.yubico.com"
         val challenge = Random.nextBytes(32)
 
         val assertionRequest = (state.value as State.PublicKeysDerived).credential.createSigningAttestationOption(
             message = messageSha256,
-            domain = domain,
+            domain = DOMAIN,
             challenge = challenge,
             derivedKey = derivedKey,
         ) ?: throw IllegalStateException("Could not create attestation request.")
@@ -119,7 +118,7 @@ class ARKGTrackViewModel(
             Log.i("CREDGET", assertionRequest)
 
             val result = client.getAssertion(
-                origin = Origin("https://$domain"),
+                origin = Origin("https://$DOMAIN"),
                 request = assertionRequest,
                 clientDataHash = null,
             )
