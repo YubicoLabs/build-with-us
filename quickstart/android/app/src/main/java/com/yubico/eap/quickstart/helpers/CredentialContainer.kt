@@ -1,5 +1,6 @@
-package com.yubico.eap.quickstart.track.info
+package com.yubico.eap.quickstart.helpers
 
+import android.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -10,9 +11,10 @@ import android.util.Base64.NO_WRAP
 import android.util.Base64.URL_SAFE
 import android.util.Base64.encodeToString
 import android.widget.EditText
-import com.yubico.eap.quickstart.track.info.Operation.CreateOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetInfoOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetOperation
+import com.yubico.eap.quickstart.helpers.Operation.CreateOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetCtap2Session
+import com.yubico.eap.quickstart.helpers.Operation.GetInfoOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetOperation
 import com.yubico.yubikit.android.YubiKitManager
 import com.yubico.yubikit.android.transport.nfc.NfcConfiguration
 import com.yubico.yubikit.android.transport.nfc.NfcNotAvailable
@@ -42,6 +44,10 @@ import com.yubico.eap.quickstart.logging.YOLOLogger.Companion as Log
 sealed class Operation(
     open val failure: (Throwable) -> Unit,
 ) {
+    data class GetCtap2Session(
+        val success: (Ctap2Session) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure)
 
     data class GetInfoOperation(
         val success: (Ctap2Session.InfoData) -> Unit,
@@ -204,6 +210,12 @@ class CredentialContainer(
                         device,
                         operation
                     )
+
+                is GetCtap2Session ->
+                    getSessionWithDevice(
+                        device,
+                        operation
+                    )
             }
         } catch (e: Throwable) {
             Log.e(tagForLog, "Something went wrong.", e)
@@ -307,6 +319,16 @@ class CredentialContainer(
         operation.success(info)
     }
 
+    private fun getSessionWithDevice(
+        device: YubiKeyDevice,
+        operation: GetCtap2Session,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        val session = Ctap2Session(connection)
+
+        operation.success(session)
+    }
+
     private fun getWithSession(
         connection: YubiKeyConnection,
         operation: GetOperation,
@@ -408,7 +430,7 @@ class CredentialContainer(
             AlertDialog.Builder(activity)
                 .setTitle("select credential")
                 .setItems(items, listener)
-                .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                .setNegativeButton(R.string.cancel) { dialog, which ->
                     Log.i(tagForLog, "No user selected.")
                     dialog.dismiss()
                     failure()
@@ -441,7 +463,7 @@ class CredentialContainer(
                 AlertDialog.Builder(activity)
                     .setTitle("Please enter your PIN.")
                     .setView(pinEdit)
-                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    .setPositiveButton(R.string.ok) { dialog, which ->
                         Log.i(tagForLog, "PIN entered.")
                         dialog.dismiss()
                         lastPinUsed = LastPin(
@@ -450,7 +472,7 @@ class CredentialContainer(
                         )
                         callback(pinEdit.text.toString())
                     }
-                    .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                    .setNegativeButton(R.string.cancel) { dialog, which ->
                         Log.i(tagForLog, "PIN entry cancelled.")
                         dialog.dismiss()
                         callback(null)

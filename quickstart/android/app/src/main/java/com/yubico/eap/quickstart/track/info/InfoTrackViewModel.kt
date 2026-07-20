@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.track.TrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import com.yubico.yubikit.fido.ctap.Ctap2Session
