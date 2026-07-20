@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackViewModel
 import com.yubico.eap.quickstart.track.info.InfoTrackViewModel
+import com.yubico.eap.quickstart.track.ppuat.PpuatTrackViewModel
 import com.yubico.eap.quickstart.track.signing.SigningTrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import kotlinx.coroutines.launch
@@ -35,11 +36,13 @@ class QuickstartVM(
     }
 
     fun startTrack(trackIndex: Int, activity: Activity) {
+        var index = 0
         val newTrackVM = when (trackIndex) {
-            0 -> InfoTrackViewModel(application)
-            1 -> CredentialTrackViewModel(application)
-            2 -> SigningTrackViewModel(application)
-            3 -> ARKGTrackViewModel(application)
+            index++ -> InfoTrackViewModel(application)
+            index++ -> PpuatTrackViewModel(application)
+            index++ -> CredentialTrackViewModel(application)
+            index++ -> SigningTrackViewModel(application)
+            index++ -> ARKGTrackViewModel(application)
 
             else -> TODO("Implement track with index $trackIndex.")
         }
