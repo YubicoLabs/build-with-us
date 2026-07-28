@@ -33,9 +33,8 @@ WebAuthnInterceptorSample [README](WebAuthnInterceptorSample/README.md)
 
 ---
 
-### PreviewSign (Browswer-based Signing Preview)
-
-The `previewSign` extension is a [proposed WebAuthn extension](https://yubicolabs.github.io/webauthn-sign-extension/4/#sctn-sign-extension) that supports hardware-backed ECDSA P-256 signing over application-defined data.
+### PreviewSign (Browswer-based Signing Extension Preview)
+NOTE: This quickstart is using the WebAuthnInterceptorSample to demonstrate the preview signing feature through a web browser without installing a Safari Web Extension. 
 
 - `previewSign`
 
@@ -63,7 +62,8 @@ Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `
 - `encIdentifier`
 - `encCredStoreState`
 
-#### README <COMING SOON>(COMING SOON)
+[README](device-identity/README.md)
+
 ---
 
 ### third-party-payments

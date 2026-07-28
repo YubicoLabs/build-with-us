@@ -38,7 +38,7 @@ We have compiled a set of implementation examples to help you integrate these ne
 
 Visit the [**/quickstart**](./quickstart) directory for platform-specific demos:
 
-* [**iOS Implementation**](./quickstart/ios) - Utilizing the Yubico Mobile SDK for iOS.
+* [**iOS / macOS**](./quickstart/ios) - Utilizing the Yubico Mobile SDK for iOS/macOS.
 * [**Android Implementation**](./quickstart/android) - Native Android integration examples.
 * [**.NET / Desktop**](./quickstart/dotnet) - Implementation using our desktop-class libraries.
 
