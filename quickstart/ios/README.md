@@ -22,7 +22,7 @@ iOS/
 ├── device-identity/         # Enhance UX using PPUAT (Persistent PIN UV Auth Token)
 ├── third-party-payments/    # thirdPartyPayment, credProtect, and credBlob
 ├── yubikey-management/      # GetInfo, discovery, pin
-├── WebAuthnInterceptor/     # iOS/macOS app with embedded WKWebView and WebAuthn interceptor
+├── WebAuthnInterceptorSample/     # iOS/macOS app with embedded WKWebView and WebAuthn interceptor
 
 ```
 
