@@ -30,9 +30,9 @@ Reads `AuthenticatorInfo` fields supported in firmware 5.8. No credentials are c
 
 ---
 
-### Persistent token and device identity
+### Conditional mediation: persistent token & device identity (console)
 
-Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `encCredStoreState` decryption and cross-session token reuse. These are the primitives that support conditional mediation for hardware security keys.
+Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `encCredStoreState` decryption and cross-session token reuse. These are the primitives that support conditional mediation for hardware security keys. This is the console version that prints each one.
 
 - Persistent PIN UV Auth Token (PPUAT)
 - Persistent Credential Management Read Only (PCMR)
@@ -40,6 +40,18 @@ Implements PPUAT acquisition with PCMR permission, `encIdentifier` decryption, `
 - `encCredStoreState`
 
 [README](device-identity/README.md) &#183; [Code](device-identity/DeviceIdentityDemo.cs)
+
+---
+
+### Conditional mediation: silent passkey autofill (WPF GUI app)
+
+A graphical (WPF) version of the console conditional-mediation example above. It lists the passkeys on a connected YubiKey with no PIN prompt after the first unlock, using a PPUAT saved to disk (Windows DPAPI) so it still works after the app is closed and reopened. It uses the same primitives: PPUAT, PCMR, `encIdentifier`, `encCredStoreState`.
+
+This is a standalone app with its own solution. It is not part of the interactive runner below, and it uses the released `Yubico.YubiKey` NuGet package. Requires Windows and the .NET desktop workload.
+
+To run: open `PasskeyAutofill.sln` in Visual Studio 2022 and press F5, or run `dotnet run` from `PasskeyAutofill.Wpf/` in an elevated terminal.
+
+[README](device-identity-wpf-gui/README.md) &#183; [Code](device-identity-wpf-gui/PasskeyAutofill.Core/PasskeyVault.cs)
 
 ---
 
