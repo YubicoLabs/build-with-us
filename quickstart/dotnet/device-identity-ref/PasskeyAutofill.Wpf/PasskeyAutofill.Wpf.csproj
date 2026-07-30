@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>PasskeyAutofill.App</RootNamespace>
+    <AssemblyName>PasskeyAutofill</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <!-- DPAPI (ProtectedData) for encrypting the persisted PPUAT at rest. Not in the
+         base net8 Windows ref set, so referenced explicitly. -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PasskeyAutofill.Core\PasskeyAutofill.Core.csproj" />
+  </ItemGroup>
+
+</Project>
