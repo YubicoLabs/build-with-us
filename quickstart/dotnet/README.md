@@ -125,6 +125,6 @@ Wondering how these features behave through WebAuthn in the Web? See the [browse
 
 ## SDK reference
 
-These examples reference [Yubico.YubiKey](https://www.nuget.org/packages/Yubico.YubiKey) v1.15.1.
+These examples reference [Yubico.YubiKey](https://www.nuget.org/packages/Yubico.YubiKey) v1.17.1.
 
 API documentation: [docs.yubico.com/yesdk](https://docs.yubico.com/yesdk/)

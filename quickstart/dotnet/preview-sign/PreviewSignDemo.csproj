@@ -10,6 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\common\Quickstarts.Common.csproj" />
     <!-- previewSign shipped in the official Yubico.YubiKey 1.17.0 release. -->
-    <PackageReference Include="Yubico.YubiKey" Version="1.17.0" />
+    <PackageReference Include="Yubico.YubiKey" Version="1.17.1" />
   </ItemGroup>
 </Project>
