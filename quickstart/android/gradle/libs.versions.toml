@@ -1,14 +1,14 @@
 [versions]
 agp = "9.1.1"
 coreKtx = "1.18.0"
-lifecycleRuntimeKtx = "2.10.0"
+lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.3.10"
 composeBom = "2026.03.00"
 
 logback = "3.0.0"
 yubikit = "3.2.0"
-bouncycastle = "1.83"
+bouncycastle = "1.85"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
