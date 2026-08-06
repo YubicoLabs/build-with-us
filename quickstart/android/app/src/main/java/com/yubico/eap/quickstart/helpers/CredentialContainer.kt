@@ -1,5 +1,6 @@
-package com.yubico.eap.quickstart.track.info
+package com.yubico.eap.quickstart.helpers
 
+import android.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -10,9 +11,11 @@ import android.util.Base64.NO_WRAP
 import android.util.Base64.URL_SAFE
 import android.util.Base64.encodeToString
 import android.widget.EditText
-import com.yubico.eap.quickstart.track.info.Operation.CreateOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetInfoOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetOperation
+import com.yubico.eap.quickstart.helpers.Operation.CreateOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetCtap2Session
+import com.yubico.eap.quickstart.helpers.Operation.GetCtap2SessionWithoutPin
+import com.yubico.eap.quickstart.helpers.Operation.GetInfoOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetOperation
 import com.yubico.yubikit.android.YubiKitManager
 import com.yubico.yubikit.android.transport.nfc.NfcConfiguration
 import com.yubico.yubikit.android.transport.nfc.NfcNotAvailable
@@ -39,14 +42,25 @@ import kotlin.time.TimeSource
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 import com.yubico.eap.quickstart.logging.YOLOLogger.Companion as Log
 
+interface Pinless
+
 sealed class Operation(
     open val failure: (Throwable) -> Unit,
 ) {
+    data class GetCtap2Session(
+        val success: (Ctap2Session, String) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure)
+
+    data class GetCtap2SessionWithoutPin(
+        val success: (Ctap2Session) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure), Pinless
 
     data class GetInfoOperation(
         val success: (Ctap2Session.InfoData) -> Unit,
         override val failure: (Throwable) -> Unit,
-    ) : Operation(failure)
+    ) : Operation(failure), Pinless
 
     data class CreateOperation(
         val options: PublicKeyCredentialCreationOptions,
@@ -100,6 +114,11 @@ class CredentialContainer(
         }
     }
 
+    private fun stopDiscoveries() {
+        manager.stopNfcDiscovery(activity)
+        manager.stopUsbDiscovery()
+    }
+
     private var lastOperation: Operation? = null
 
     private var lastPinUsed: LastPin? = null
@@ -133,6 +152,40 @@ class CredentialContainer(
 
         lastOperation =
             GetInfoOperation(
+                success = successCallback,
+                failure = {
+                    lastPinUsed = null
+                    failureCallback(it)
+                }
+            )
+    }
+
+    fun getSession(
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (Ctap2Session, String) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico getinfo implementation called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetCtap2Session(
+                success = successCallback,
+                failure = {
+                    lastPinUsed = null
+                    failureCallback(it)
+                }
+            )
+    }
+
+    fun getSessionWithoutPin(
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (Ctap2Session) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico getinfo implementation called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetCtap2SessionWithoutPin(
                 success = successCallback,
                 failure = {
                     lastPinUsed = null
@@ -204,6 +257,19 @@ class CredentialContainer(
                         device,
                         operation
                     )
+
+                is GetCtap2Session ->
+                    getSessionWithDevice(
+                        device,
+                        operation,
+                        pin!!
+                    )
+
+                is GetCtap2SessionWithoutPin ->
+                    getSessionWithDeviceButWithoutPin(
+                        device,
+                        operation,
+                    )
             }
         } catch (e: Throwable) {
             Log.e(tagForLog, "Something went wrong.", e)
@@ -211,12 +277,16 @@ class CredentialContainer(
     }
 
     private fun deviceConnected(device: YubiKeyDevice) {
-        lastOperation?.let { operation ->
-            if (operation is GetInfoOperation) {
-                routeToCorrectMethodWithPin(operation, device, null)
-            } else {
-                askForPin(operation, device)
+        try {
+            lastOperation?.let { operation ->
+                if (operation is Pinless) {
+                    routeToCorrectMethodWithPin(operation, device, null)
+                } else {
+                    askForPin(operation, device)
+                }
             }
+        } finally {
+            stopDiscoveries()
         }
     }
 
@@ -300,11 +370,44 @@ class CredentialContainer(
         operation: GetInfoOperation,
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
-        val session = Ctap2Session(connection)
-        val info = session.info
-        session.close()
+        try {
+            val session = Ctap2Session(connection)
+            val info = session.info
+            session.close()
 
-        operation.success(info)
+            operation.success(info)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
+    }
+
+    private fun getSessionWithDevice(
+        device: YubiKeyDevice,
+        operation: GetCtap2Session,
+        pin: String,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        try {
+            val session = Ctap2Session(connection)
+
+            operation.success(session, pin)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
+    }
+
+    private fun getSessionWithDeviceButWithoutPin(
+        device: YubiKeyDevice,
+        operation: GetCtap2SessionWithoutPin,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        try {
+            val session = Ctap2Session(connection)
+
+            operation.success(session)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
     }
 
     private fun getWithSession(
@@ -408,7 +511,7 @@ class CredentialContainer(
             AlertDialog.Builder(activity)
                 .setTitle("select credential")
                 .setItems(items, listener)
-                .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                .setNegativeButton(R.string.cancel) { dialog, which ->
                     Log.i(tagForLog, "No user selected.")
                     dialog.dismiss()
                     failure()
@@ -441,7 +544,7 @@ class CredentialContainer(
                 AlertDialog.Builder(activity)
                     .setTitle("Please enter your PIN.")
                     .setView(pinEdit)
-                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    .setPositiveButton(R.string.ok) { dialog, which ->
                         Log.i(tagForLog, "PIN entered.")
                         dialog.dismiss()
                         lastPinUsed = LastPin(
@@ -450,7 +553,7 @@ class CredentialContainer(
                         )
                         callback(pinEdit.text.toString())
                     }
-                    .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                    .setNegativeButton(R.string.cancel) { dialog, which ->
                         Log.i(tagForLog, "PIN entry cancelled.")
                         dialog.dismiss()
                         callback(null)
@@ -474,7 +577,7 @@ private fun Byte.toHumanReadable(): String =
         ?: "Unknown CTAP ERROR"
 
 
-private fun getClientOptions(
+fun getClientOptions(
     type: String,
     challenge: String,
     origin: String,
