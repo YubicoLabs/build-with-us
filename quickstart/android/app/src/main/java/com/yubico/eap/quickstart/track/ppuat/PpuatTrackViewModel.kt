@@ -15,10 +15,11 @@ import com.yubico.yubikit.fido.ctap.ClientPin
 import com.yubico.yubikit.fido.ctap.CredentialManagement
 import com.yubico.yubikit.fido.ctap.Ctap2Session
 import com.yubico.yubikit.fido.ctap.PinUvAuthProtocolV2
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 import com.yubico.eap.quickstart.logging.YOLOLogger as Log
+
+private const val STORAGE_TOKEN_FILE = "token.bin"
 
 class PpuatTrackViewModel(
     application: Application
@@ -31,7 +32,9 @@ class PpuatTrackViewModel(
             val logs: List<String>
         ) : State()
 
-        object InProgress : State()
+        object WaitingForApp : State()
+
+        object WaitingForUser : State()
 
         object NoTokenPresent : State()
 
@@ -41,21 +44,20 @@ class PpuatTrackViewModel(
         ) : State()
     }
 
-    val state: MutableState<State> = mutableStateOf(State.InProgress)
+    val state: MutableState<State> = mutableStateOf(State.WaitingForApp)
 
     private var container: CredentialContainer? = null
 
     override suspend fun execute(client: FidoClient, activity: Activity) {
         viewModelScope.launch {
             clearLogs()
-            state.value = State.InProgress
+            state.value = State.WaitingForApp
 
             container = CredentialContainer(activity)
 
             val storedToken = checkStorageForToken()
-            if (storedToken != null) {
-                // TODO: ADD tests, YOLO.
-
+            if (storedToken != null && storedToken.isNotEmpty()) {
+                state.value = State.WaitingForUser
                 // Token is stored securely, so we just display the creds, no pin needed!!
                 // Essentially it's magic! 🪄
                 container!!.getSessionWithoutPin(
@@ -81,7 +83,7 @@ class PpuatTrackViewModel(
 
     fun createToken() {
         viewModelScope.launch {
-            state.value = State.InProgress
+            state.value = State.WaitingForUser
 
             container?.getSession(
                 failureCallback = { th ->
@@ -96,11 +98,11 @@ class PpuatTrackViewModel(
                     try {
                         val token = pin.getPinToken(
                             pinEntered.toCharArray(),
-                            ClientPin.PIN_PERMISSION_CM,
+                            ClientPin.PIN_PERMISSION_PCMR, /// !!!!!!!
                             DOMAIN,
                         )
 
-                        // TODO STORE TOKEN!💾
+                        storeToken(token)
                         showCredentials(
                             session, token
                         )
@@ -141,7 +143,7 @@ class PpuatTrackViewModel(
             state.value = State.ListCredentialsWithToken(
                 credentials.map {
                     """
-                        ${it.user.getOrDefault("name", null)?:"{No Name}"}
+                        ${it.user.getOrDefault("name", null) ?: "{No Name}"}
                         ${(it.credentialId["id"] as? ByteArray)?.toHexString() ?: "{No Id}"}
                     """.trimIndent()
                 },
@@ -157,22 +159,39 @@ class PpuatTrackViewModel(
     }
 
     fun deleteToken() {
-        deleteStorageInToken()
-        state.value = State.NoTokenPresent
-    }
-
-    private suspend fun checkStorageForToken(): ByteArray? {
-        // TODO: Check storage for PPUAT
-        delay(1.seconds)
-
-        return null
-    }
-
-    private fun deleteStorageInToken() {
-        viewModelScope.launch {
-            // TODO: delete stored PPUAT
-            delay(1.seconds)
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteStorageInToken()
+            state.value = State.NoTokenPresent
         }
+    }
+
+    private fun storeToken(token: ByteArray) = try {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.i("TOKEN", token.toHexString())
+            application.openFileOutput(
+                STORAGE_TOKEN_FILE,
+                Context.MODE_PRIVATE
+            ).write(token)
+        }
+    } catch (th: Throwable) {
+        Log.e("WRITE", "Could not write file $STORAGE_TOKEN_FILE.", th)
+    }
+
+    private suspend fun checkStorageForToken(): ByteArray? = try {
+        val foo = application.openFileInput(
+            STORAGE_TOKEN_FILE,
+        ).readBytes()
+        Log.e("TOKEN", foo.toHexString())
+
+        foo
+    } catch (th: Throwable) {
+        null
+    }
+
+    private suspend fun deleteStorageInToken() = try {
+        application.deleteFile(STORAGE_TOKEN_FILE)
+    } catch (th: Throwable) {
+        Log.e("DELNO", "Couldn't delete file $STORAGE_TOKEN_FILE.", th)
     }
 
     private fun clearLogs() {

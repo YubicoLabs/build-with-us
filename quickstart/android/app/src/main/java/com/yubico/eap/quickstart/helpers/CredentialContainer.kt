@@ -265,7 +265,11 @@ class CredentialContainer(
                         pin!!
                     )
 
-                is Pinless -> throw IllegalStateException("Pinnless transaction asks for pin.")
+                is GetCtap2SessionWithoutPin ->
+                    getSessionWithDeviceButWithoutPin(
+                        device,
+                        operation,
+                    )
             }
         } catch (e: Throwable) {
             Log.e(tagForLog, "Something went wrong.", e)
@@ -387,6 +391,20 @@ class CredentialContainer(
             val session = Ctap2Session(connection)
 
             operation.success(session, pin)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        }
+    }
+
+    private fun getSessionWithDeviceButWithoutPin(
+        device: YubiKeyDevice,
+        operation: GetCtap2SessionWithoutPin,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        try {
+            val session = Ctap2Session(connection)
+
+            operation.success(session)
         } catch (th: Throwable) {
             operation.failure(th)
         }

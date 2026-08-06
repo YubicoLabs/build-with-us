@@ -44,6 +44,8 @@ fun PpuatTrackView(
             informationItems = typedState.logs,
             onInformationSelected = { onCopyToClipBoard(typedState.logs[it]) },
             onCopyToClipBoard = onCopyToClipBoard,
+            onConfirm = vm::deleteToken,
+            confirmationButtonTitle = "Delete Token?",
             onFinished = onFinished,
         )
     }
