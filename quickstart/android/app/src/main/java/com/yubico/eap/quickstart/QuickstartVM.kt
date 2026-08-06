@@ -53,7 +53,6 @@ class QuickstartVM(
         viewModelScope.launch {
             newTrackVM.execute(fido, activity)
         }
-
     }
 
     fun copyToClipBoard(message: String) {
