@@ -15,7 +15,11 @@ fun PpuatTrackView(
     val state by remember { vm.state }
 
     when (val typedState = state) {
-        is PpuatTrackViewModel.State.InProgress -> InProgressView()
+        is PpuatTrackViewModel.State.WaitingForUser -> InProgressView(
+            "Please interact\nWith your YubiKey."
+        )
+
+        is PpuatTrackViewModel.State.WaitingForApp -> InProgressView()
 
         is PpuatTrackViewModel.State.NoTokenPresent -> UserInformationView(
             title = "No Token Found",

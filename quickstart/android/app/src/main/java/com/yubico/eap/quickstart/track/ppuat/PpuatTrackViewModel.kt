@@ -2,8 +2,10 @@ package com.yubico.eap.quickstart.track.ppuat
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.helpers.DOMAIN

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,13 +15,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
-fun InProgressView() {
+
+private fun InProgressViewPreview() {
+    InProgressView(
+        "Words"
+    )
+}
+
+@Composable
+fun InProgressView(
+    title: String? = null
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0.0f,
@@ -35,13 +47,24 @@ fun InProgressView() {
     Box(
         modifier = Modifier.Companion
             .padding(48.dp)
-            .fillMaxWidth()
-            .rotate(rotation),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier
+                .rotate(rotation),
             fontSize = 100.sp,
             text = "⏳"
         )
+        if (title != null) {
+            Text(
+                modifier = Modifier
+                    .background(
+                        Color.Black.copy(alpha = 0.5f)
+                    ),
+                color = Color.White,
+                text = title
+            )
+        }
     }
 }
