@@ -2,25 +2,21 @@ package com.yubico.eap.quickstart.track.ppuat
 
 import android.app.Activity
 import android.app.Application
-import android.util.Base64.NO_PADDING
-import android.util.Base64.NO_WRAP
-import android.util.Base64.URL_SAFE
-import android.util.Base64.encodeToString
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.helpers.DOMAIN
-import com.yubico.eap.quickstart.helpers.getClientOptions
+import com.yubico.eap.quickstart.helpers.sha256
 import com.yubico.eap.quickstart.track.TrackViewModel
 import com.yubico.yubikit.core.fido.CtapException
 import com.yubico.yubikit.fido.android.ui.FidoClient
-import com.yubico.yubikit.fido.client.Utils
 import com.yubico.yubikit.fido.ctap.ClientPin
+import com.yubico.yubikit.fido.ctap.CredentialManagement
+import com.yubico.yubikit.fido.ctap.Ctap2Session
 import com.yubico.yubikit.fido.ctap.PinUvAuthProtocolV2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 import com.yubico.eap.quickstart.logging.YOLOLogger as Log
 
@@ -39,14 +35,10 @@ class PpuatTrackViewModel(
 
         object NoTokenPresent : State()
 
-        open class TokenFound(
-            open val token: ByteArray,
-        ) : State()
-
         class ListCredentialsWithToken(
             val credentials: List<String>,
-            override val token: ByteArray,
-        ) : TokenFound(token)
+            val token: ByteArray,
+        ) : State()
     }
 
     val state: MutableState<State> = mutableStateOf(State.InProgress)
@@ -61,10 +53,29 @@ class PpuatTrackViewModel(
             container = CredentialContainer(activity)
 
             val storedToken = checkStorageForToken()
+            if (storedToken != null) {
+                // TODO: ADD tests, YOLO.
 
-            state.value = storedToken?.let { token ->
-                State.TokenFound(token)
-            } ?: State.NoTokenPresent
+                // Token is stored securely, so we just display the creds, no pin needed!!
+                // Essentially it's magic! 🪄
+                container!!.getSessionWithoutPin(
+                    failureCallback = {
+                        state.value = State.Error(
+                            "No session for you",
+                            it.toString(),
+                            Log.logs
+                        )
+                    },
+                    successCallback = { session ->
+                        showCredentials(
+                            session,
+                            storedToken
+                        )
+                    }
+                )
+            } else {
+                state.value = State.NoTokenPresent
+            }
         }
     }
 
@@ -74,81 +85,80 @@ class PpuatTrackViewModel(
 
             container?.getSession(
                 failureCallback = { th ->
-                    state.value = State.Error("Error", "Couldn't get session.\nReason: $th", Log.logs)
+                    state.value = State.Error(
+                        "Error",
+                        "Couldn't get session.\nReason: $th",
+                        Log.logs
+                    )
                 },
-                successCallback = { session ->
-                    session.use { session ->
-                        val pin = ClientPin(session, PinUvAuthProtocolV2())
-                        try {
-                            val token = pin.getUvToken(
-                                Int.MAX_VALUE, // ALLOW ALL??
-                                DOMAIN,
-                                null
-                            )
+                successCallback = { session, pinEntered ->
+                    val pin = ClientPin(session, PinUvAuthProtocolV2())
+                    try {
+                        val token = pin.getPinToken(
+                            pinEntered.toCharArray(),
+                            ClientPin.PIN_PERMISSION_CM,
+                            DOMAIN,
+                        )
 
-                            state.value = State.TokenFound(
-                                token
-                            )
-                        } catch (e: CtapException) {
-                            state.value = State.Error("Error", e.toString(), Log.logs)
-                        }
+                        // TODO STORE TOKEN!💾
+                        showCredentials(
+                            session, token
+                        )
+
+                    } catch (e: CtapException) {
+                        state.value = State.Error(
+                            "Error",
+                            e.toString(),
+                            Log.logs
+                        )
+                    } finally {
+                        session.close()
                     }
                 },
             )
         }
     }
 
-    fun showCredentials() {
-        viewModelScope.launch {
-            if (state.value is State.TokenFound) {
-                val tokenState = (state.value as State.TokenFound)
-                state.value = State.InProgress
+    private fun showCredentials(
+        session: Ctap2Session,
+        token: ByteArray
+    ) {
+        try {
+            val management = CredentialManagement(
+                session,
+                PinUvAuthProtocolV2(),
+                token
+            )
 
-                container?.getSession(
-                    failureCallback = { th ->
-                        state.value = State.Error("Error", "$th", Log.logs)
-                    },
-                    successCallback = { session ->
-                        val challenge = Random.nextBytes(32)
-                        val clientData = getClientOptions(
-                            type = "webauthn.get",
-                            origin = DOMAIN,
-                            challenge = encodeToString(
-                                challenge,
-                                NO_PADDING or NO_WRAP or URL_SAFE,
-                            )
-                        )
-
-                        val clientDataHash = Utils.hash(clientData)
-
-                        val credentials = session.getAssertions(
-                            DOMAIN,
-                            clientDataHash,
-                            listOf(),
-                            mapOf<String, Any?>(),
-                            mapOf<String, Any?>(),
-                            tokenState.token,
-                            PinUvAuthProtocolV2.VERSION,
-                            null
-                        )
-
-                        state.value = State.ListCredentialsWithToken(
-                            credentials.map { "${it.credential}" },
-                            tokenState.token
-                        )
-                    }
+            val rpIdHash = DOMAIN.toByteArray().sha256()
+            val credentials = mutableListOf<CredentialManagement.CredentialData>()
+            credentials.addAll(
+                management.enumerateCredentials(
+                    rpIdHash
                 )
-            } else {
-                state.value = State.Error("Error", "No token found.", Log.logs)
-            }
+            )
+
+            state.value = State.ListCredentialsWithToken(
+                credentials.map {
+                    """
+                        ${it.user.getOrDefault("name", null)?:"{No Name}"}
+                        ${(it.credentialId["id"] as? ByteArray)?.toHexString() ?: "{No Id}"}
+                    """.trimIndent()
+                },
+                token
+            )
+        } catch (th: Throwable) {
+            state.value = State.Error(
+                "No listing of credentials with token for you.",
+                "Why? Ask th:\n$th",
+                Log.logs
+            )
         }
     }
 
     fun deleteToken() {
-        if (state.value is State.TokenFound) {
-            deleteStorageInToken()
-            state.value = State.NoTokenPresent
-        }
+        deleteStorageInToken()
+        state.value = State.NoTokenPresent
     }
 
     private suspend fun checkStorageForToken(): ByteArray? {

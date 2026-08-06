@@ -26,7 +26,7 @@ fun PpuatTrackView(
 
         is PpuatTrackViewModel.State.ListCredentialsWithToken -> UserInformationView(
             title = "Credentials Found",
-            message = "The following credentials where found for token ${typedState.token.toHexString()}.",
+            message = "The following credentials where found for token ${typedState.token.toHexString()}:",
             informationItems = typedState.credentials,
             confirmationButtonTitle = "Delete Token",
             onConfirm = vm::deleteToken,
@@ -34,20 +34,6 @@ fun PpuatTrackView(
             onInformationSelected = {
                 onCopyToClipBoard(
                     typedState.credentials[it]
-                )
-            }
-        )
-
-        is PpuatTrackViewModel.State.TokenFound -> UserInformationView(
-            title = "Token Created",
-            message = "The following token was created.",
-            informationItems = listOf(typedState.token.toHexString()),
-            confirmationButtonTitle = "Retrieve Credentials",
-            onConfirm = vm::showCredentials,
-            onFinished = onFinished,
-            onInformationSelected = {
-                onCopyToClipBoard(
-                    typedState.token.toHexString()
                 )
             }
         )

@@ -13,6 +13,7 @@ import android.util.Base64.encodeToString
 import android.widget.EditText
 import com.yubico.eap.quickstart.helpers.Operation.CreateOperation
 import com.yubico.eap.quickstart.helpers.Operation.GetCtap2Session
+import com.yubico.eap.quickstart.helpers.Operation.GetCtap2SessionWithoutPin
 import com.yubico.eap.quickstart.helpers.Operation.GetInfoOperation
 import com.yubico.eap.quickstart.helpers.Operation.GetOperation
 import com.yubico.yubikit.android.YubiKitManager
@@ -47,9 +48,14 @@ sealed class Operation(
     open val failure: (Throwable) -> Unit,
 ) {
     data class GetCtap2Session(
-        val success: (Ctap2Session) -> Unit,
+        val success: (Ctap2Session, String) -> Unit,
         override val failure: (Throwable) -> Unit,
     ) : Operation(failure)
+
+    data class GetCtap2SessionWithoutPin(
+        val success: (Ctap2Session) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure), Pinless
 
     data class GetInfoOperation(
         val success: (Ctap2Session.InfoData) -> Unit,
@@ -108,6 +114,11 @@ class CredentialContainer(
         }
     }
 
+    private fun stopDiscoveries() {
+        manager.stopNfcDiscovery(activity)
+        manager.stopUsbDiscovery()
+    }
+
     private var lastOperation: Operation? = null
 
     private var lastPinUsed: LastPin? = null
@@ -151,13 +162,30 @@ class CredentialContainer(
 
     fun getSession(
         failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
-        successCallback: (Ctap2Session) -> Unit,
+        successCallback: (Ctap2Session, String) -> Unit,
     ) {
         Log.i(tagForLog, "yubico getinfo implementation called.")
         startDiscoveries()
 
         lastOperation =
             GetCtap2Session(
+                success = successCallback,
+                failure = {
+                    lastPinUsed = null
+                    failureCallback(it)
+                }
+            )
+    }
+
+    fun getSessionWithoutPin(
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (Ctap2Session) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico getinfo implementation called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetCtap2SessionWithoutPin(
                 success = successCallback,
                 failure = {
                     lastPinUsed = null
@@ -233,8 +261,11 @@ class CredentialContainer(
                 is GetCtap2Session ->
                     getSessionWithDevice(
                         device,
-                        operation
+                        operation,
+                        pin!!
                     )
+
+                is Pinless -> throw IllegalStateException("Pinnless transaction asks for pin.")
             }
         } catch (e: Throwable) {
             Log.e(tagForLog, "Something went wrong.", e)
@@ -242,12 +273,16 @@ class CredentialContainer(
     }
 
     private fun deviceConnected(device: YubiKeyDevice) {
-        lastOperation?.let { operation ->
-            if (operation is Pinless) {
-                routeToCorrectMethodWithPin(operation, device, null)
-            } else {
-                askForPin(operation, device)
+        try {
+            lastOperation?.let { operation ->
+                if (operation is Pinless) {
+                    routeToCorrectMethodWithPin(operation, device, null)
+                } else {
+                    askForPin(operation, device)
+                }
             }
+        } finally {
+            stopDiscoveries()
         }
     }
 
@@ -345,12 +380,13 @@ class CredentialContainer(
     private fun getSessionWithDevice(
         device: YubiKeyDevice,
         operation: GetCtap2Session,
+        pin: String,
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
         try {
             val session = Ctap2Session(connection)
 
-            operation.success(session)
+            operation.success(session, pin)
         } catch (th: Throwable) {
             operation.failure(th)
         }
