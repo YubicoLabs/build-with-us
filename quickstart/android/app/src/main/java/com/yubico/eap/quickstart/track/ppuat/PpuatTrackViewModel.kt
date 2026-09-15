@@ -2,13 +2,12 @@ package com.yubico.eap.quickstart.track.ppuat
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.helpers.DOMAIN
+import com.yubico.eap.quickstart.helpers.SecureStorage
 import com.yubico.eap.quickstart.helpers.sha256
 import com.yubico.eap.quickstart.track.TrackViewModel
 import com.yubico.yubikit.core.fido.CtapException
@@ -20,8 +19,6 @@ import com.yubico.yubikit.fido.ctap.PinUvAuthProtocolV2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.yubico.eap.quickstart.logging.YOLOLogger as Log
-
-private const val STORAGE_TOKEN_FILE = "token.bin"
 
 class PpuatTrackViewModel(
     application: Application
@@ -49,6 +46,8 @@ class PpuatTrackViewModel(
     val state: MutableState<State> = mutableStateOf(State.WaitingForApp)
 
     private var container: CredentialContainer? = null
+
+    private val secureStorage: SecureStorage = SecureStorage(getApplication())
 
     override suspend fun execute(client: FidoClient, activity: Activity) {
         viewModelScope.launch {
@@ -105,6 +104,7 @@ class PpuatTrackViewModel(
                         )
 
                         storeToken(token)
+
                         showCredentials(
                             session, token
                         )
@@ -163,37 +163,28 @@ class PpuatTrackViewModel(
     fun deleteToken() {
         viewModelScope.launch(Dispatchers.IO) {
             deleteStorageInToken()
+
             state.value = State.NoTokenPresent
         }
     }
 
-    private fun storeToken(token: ByteArray) = try {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.i("TOKEN", token.toHexString())
-            application.openFileOutput(
-                STORAGE_TOKEN_FILE,
-                Context.MODE_PRIVATE
-            ).write(token)
-        }
+    private fun storeToken(plain: ByteArray) = try {
+        secureStorage.store(plain)
     } catch (th: Throwable) {
-        Log.e("WRITE", "Could not write file $STORAGE_TOKEN_FILE.", th)
+        Log.e("WRITE", "Could not write secure .", th)
     }
 
-    private suspend fun checkStorageForToken(): ByteArray? = try {
-        val foo = application.openFileInput(
-            STORAGE_TOKEN_FILE,
-        ).readBytes()
-        Log.e("TOKEN", foo.toHexString())
-
-        foo
+    private fun checkStorageForToken(): ByteArray? = try {
+        secureStorage.retrieve()
     } catch (th: Throwable) {
+        Log.e("CHECK", "Couldn't check secure file.", th)
         null
     }
 
-    private suspend fun deleteStorageInToken() = try {
-        application.deleteFile(STORAGE_TOKEN_FILE)
+    private fun deleteStorageInToken() = try {
+        secureStorage.store(byteArrayOf(0))
     } catch (th: Throwable) {
-        Log.e("DELNO", "Couldn't delete file $STORAGE_TOKEN_FILE.", th)
+        Log.e("DELNO", "Couldn't delete secure file.", th)
     }
 
     private fun clearLogs() {
