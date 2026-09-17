@@ -113,11 +113,10 @@ class PpuatTrackViewModel(
                         )
                     } catch (th: Throwable) {
                         state.value = State.Error(
-                            "No listing of credentials with token for you.",
-                            "$th",
+                            "Credential listing failed",
+                            "Failed to list credentials using the token.\n\nReason: ${th.message ?: th}",
                             Log.logs
                         )
-                    }
                 },
                 failureCallback = {
                     state.value = State.Error(
@@ -131,9 +130,10 @@ class PpuatTrackViewModel(
     }
 
     fun deleteToken() {
-        viewModelScope.launch(Dispatchers.IO) {
-            deleteStorageInToken()
-
+        viewModelScope.launch {
+            kotlinx.coroutines.withContext(Dispatchers.IO) {
+                deleteStorageInToken()
+            }
             state.value = State.NoTokenPresent
         }
     }

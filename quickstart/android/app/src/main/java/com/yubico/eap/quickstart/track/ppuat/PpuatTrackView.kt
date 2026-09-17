@@ -30,6 +30,7 @@ fun PpuatTrackView(
             message = "Please continue to create a token.",
             confirmationButtonTitle = "Create Token",
             onConfirm = vm::createToken,
+            onFinished = onFinished,
         )
 
         is PpuatTrackViewModel.State.TokenPresent -> UserInformationView(
@@ -41,7 +42,7 @@ fun PpuatTrackView(
 
         is PpuatTrackViewModel.State.ListCredentialsWithToken -> UserInformationView(
             title = "Credentials Found",
-            message = "The following credentials where found for token ${typedState.token.toHexString()}:",
+            message = "The following credentials were found for token ${typedState.token.toHexString()}:"
             informationItems = typedState.credentials,
             confirmationButtonTitle = "Delete Token",
             onConfirm = vm::deleteToken,
