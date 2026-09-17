@@ -16,7 +16,7 @@ fun PpuatTrackView(
 
     when (val typedState = state) {
         is PpuatTrackViewModel.State.WaitingForUser -> InProgressView(
-            "Please interact\nWith your YubiKey."
+            "Please interact\nwith your YubiKey."
         )
 
         is PpuatTrackViewModel.State.WaitingForApp -> InProgressView()
@@ -26,6 +26,13 @@ fun PpuatTrackView(
             message = "Please continue to create a token.",
             confirmationButtonTitle = "Create Token",
             onConfirm = vm::createToken,
+        )
+
+        is PpuatTrackViewModel.State.TokenPresent -> UserInformationView(
+            title = "Stored token found",
+            message = "Shall we check the credentials with that token?",
+            confirmationButtonTitle = "Enumerate Credentials with token",
+            onConfirm = { vm.showCredentialsWithToken(typedState.token) },
         )
 
         is PpuatTrackViewModel.State.ListCredentialsWithToken -> UserInformationView(

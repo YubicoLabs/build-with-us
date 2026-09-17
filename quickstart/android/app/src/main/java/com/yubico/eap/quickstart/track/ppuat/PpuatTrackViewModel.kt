@@ -33,9 +33,13 @@ class PpuatTrackViewModel(
 
         object NoTokenPresent : State()
 
+        data class TokenPresent(
+            val token: ByteArray
+        ) : State()
+
         class ListCredentialsWithToken(
-            val credentials: List<String>,
             val token: ByteArray,
+            val credentials: List<String>,
         ) : State()
     }
 
