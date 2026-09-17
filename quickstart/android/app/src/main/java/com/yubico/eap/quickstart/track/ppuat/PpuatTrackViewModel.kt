@@ -8,16 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.helpers.DOMAIN
 import com.yubico.eap.quickstart.helpers.SecureStorage
-import com.yubico.eap.quickstart.helpers.sha256
 import com.yubico.eap.quickstart.track.TrackViewModel
-import com.yubico.yubikit.core.fido.CtapException
 import com.yubico.yubikit.fido.android.ui.FidoClient
-import com.yubico.yubikit.fido.ctap.ClientPin
-import com.yubico.yubikit.fido.ctap.CredentialManagement
-import com.yubico.yubikit.fido.ctap.Ctap2Session
-import com.yubico.yubikit.fido.ctap.PinUvAuthProtocolV2
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 import com.yubico.eap.quickstart.logging.YOLOLogger as Log
 
 class PpuatTrackViewModel(
@@ -57,27 +53,10 @@ class PpuatTrackViewModel(
             container = CredentialContainer(activity)
 
             val storedToken = checkStorageForToken()
-            if (storedToken != null && storedToken.isNotEmpty()) {
-                state.value = State.WaitingForUser
-                // Token is stored securely, so we just display the creds, no pin needed!!
-                // Essentially it's magic! 🪄
-                container!!.getSessionWithoutPin(
-                    failureCallback = {
-                        state.value = State.Error(
-                            "No session for you",
-                            it.toString(),
-                            Log.logs
-                        )
-                    },
-                    successCallback = { session ->
-                        showCredentials(
-                            session,
-                            storedToken
-                        )
-                    }
-                )
+            state.value = if (storedToken != null && storedToken.isNotEmpty()) {
+                State.TokenPresent(storedToken)
             } else {
-                state.value = State.NoTokenPresent
+                State.NoTokenPresent
             }
         }
     }
@@ -86,7 +65,8 @@ class PpuatTrackViewModel(
         viewModelScope.launch {
             state.value = State.WaitingForUser
 
-            container?.getSession(
+            container?.getPpuatToken(
+                rpId = DOMAIN,
                 failureCallback = { th ->
                     state.value = State.Error(
                         "Error",
@@ -94,68 +74,54 @@ class PpuatTrackViewModel(
                         Log.logs
                     )
                 },
-                successCallback = { session, pinEntered ->
-                    val pin = ClientPin(session, PinUvAuthProtocolV2())
-                    try {
-                        val token = pin.getPinToken(
-                            pinEntered.toCharArray(),
-                            ClientPin.PIN_PERMISSION_PCMR, /// !!!!!!!
-                            DOMAIN,
-                        )
+                successCallback = { token ->
+                    storeToken(token)
 
-                        storeToken(token)
-
-                        showCredentials(
-                            session, token
+                    viewModelScope.launch {
+                        delay(0.5.seconds)
+                        state.value = State.TokenPresent(
+                            token
                         )
-
-                    } catch (e: CtapException) {
-                        state.value = State.Error(
-                            "Error",
-                            e.toString(),
-                            Log.logs
-                        )
-                    } finally {
-                        session.close()
                     }
                 },
             )
         }
     }
 
-    private fun showCredentials(
-        session: Ctap2Session,
+    fun showCredentialsWithToken(
         token: ByteArray
     ) {
-        try {
-            val management = CredentialManagement(
-                session,
-                PinUvAuthProtocolV2(),
-                token
-            )
+        viewModelScope.launch {
+            state.value = State.WaitingForUser
 
-            val rpIdHash = DOMAIN.toByteArray().sha256()
-            val credentials = mutableListOf<CredentialManagement.CredentialData>()
-            credentials.addAll(
-                management.enumerateCredentials(
-                    rpIdHash
-                )
-            )
-
-            state.value = State.ListCredentialsWithToken(
-                credentials.map {
-                    """
-                        ${it.user.getOrDefault("name", null) ?: "{No Name}"}
-                        ${(it.credentialId["id"] as? ByteArray)?.toHexString() ?: "{No Id}"}
-                    """.trimIndent()
+            container?.getCredentialsWithUvToken(
+                token,
+                successCallback = { credentials ->
+                    try {
+                        state.value = State.ListCredentialsWithToken(
+                            token = token,
+                            credentials = credentials.map {
+                                """
+                                ${it.user.getOrDefault("name", null) ?: "{No Name}"}
+                                ${(it.credentialId["id"] as? ByteArray)?.toHexString() ?: "{No Id}"}
+                            """.trimIndent()
+                            }
+                        )
+                    } catch (th: Throwable) {
+                        state.value = State.Error(
+                            "No listing of credentials with token for you.",
+                            "$th",
+                            Log.logs
+                        )
+                    }
                 },
-                token
-            )
-        } catch (th: Throwable) {
-            state.value = State.Error(
-                "No listing of credentials with token for you.",
-                "Why? Ask th:\n$th",
-                Log.logs
+                failureCallback = {
+                    state.value = State.Error(
+                        "No UV token credentials",
+                        "What did you do??\n\n$it",
+                        Log.logs
+                    )
+                }
             )
         }
     }
