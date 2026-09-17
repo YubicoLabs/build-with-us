@@ -152,7 +152,7 @@ class PpuatTrackViewModel(
     }
 
     private fun deleteStorageInToken() = try {
-        secureStorage.store(byteArrayOf(0))
+        secureStorage.store(byteArrayOf())
     } catch (th: Throwable) {
         Log.e("DELNO", "Couldn't delete secure file.", th)
     }
