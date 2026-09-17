@@ -23,4 +23,6 @@
     <string name="track_ppuat">Persistent PIN/UV Authentication Token</string>
     <string name="track_sign">Signing and Verifying</string>
     <string name="track_arkg">Asynchronous Remote Key Generation</string>
+    <string name="general_in_progress">Please wait.</string>
+    <string name="general_waiting_for_yubikey">Please interact\nwith your YubiKey.</string>
 </resources>

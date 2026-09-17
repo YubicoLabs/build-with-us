@@ -3,6 +3,8 @@ package com.yubico.eap.quickstart.track.ppuat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
+import com.yubico.eap.quickstart.R
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.UserInformationView
 
@@ -16,10 +18,12 @@ fun PpuatTrackView(
 
     when (val typedState = state) {
         is PpuatTrackViewModel.State.WaitingForUser -> InProgressView(
-            "Please interact\nwith your YubiKey."
+            stringResource(R.string.general_waiting_for_yubikey)
         )
 
-        is PpuatTrackViewModel.State.WaitingForApp -> InProgressView()
+        is PpuatTrackViewModel.State.WaitingForApp -> InProgressView(
+            stringResource(R.string.general_waiting_for_yubikey)
+        )
 
         is PpuatTrackViewModel.State.NoTokenPresent -> UserInformationView(
             title = "No Token Found",

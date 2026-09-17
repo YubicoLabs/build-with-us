@@ -31,7 +31,7 @@ private fun InProgressViewPreview() {
 
 @Composable
 fun InProgressView(
-    title: String? = null
+    title: String
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
     val rotation by infiniteTransition.animateFloat(
