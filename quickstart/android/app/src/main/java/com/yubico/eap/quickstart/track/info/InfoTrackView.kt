@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yubico.eap.quickstart.R
+import com.yubico.eap.quickstart.helpers.findAlgorithm
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.UserInformationView
 
@@ -203,10 +204,14 @@ private fun InformationRow(
                 Column(
                     horizontalAlignment = Alignment.End,
                 ) {
-                    for (it in value) {
-                        when (it) {
+                    for (element in value) {
+                        when (element) {
                             is HashMap<*, *> -> {
-                                val line = it.map { (k, v) -> "$k: '$v'" }.joinToString(", ")
+                                val line = if (element.isAlgorithmMap) {
+                                    (element["alg"] as? Int)?.coseAlgorithmIdToReadable() ?: ""
+                                } else {
+                                    element.map { (k, v) -> "$k: '$v'" }.joinToString(", ")
+                                }
                                 Text(
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.End,
@@ -222,7 +227,7 @@ private fun InformationRow(
                                     textAlign = TextAlign.End,
                                     fontFamily = FontFamily.Monospace,
                                     maxLines = 1,
-                                    text = "$it"
+                                    text = "$element"
                                 )
                         }
                     }
@@ -271,4 +276,13 @@ private fun InformationRow(
         }
     }
     Spacer(modifier = Modifier.height(32.dp))
+}
+
+private val HashMap<*, *>.isAlgorithmMap: Boolean
+    get() = "type" in keys && get("type") == "public-key" &&
+            "alg" in keys && get("alg") is Int
+
+private fun Int.coseAlgorithmIdToReadable(): String = when (val algorithm = findAlgorithm(this)) {
+    null -> "Unknown ($this)"
+    else -> "${algorithm.name} (${algorithm.value})"
 }
