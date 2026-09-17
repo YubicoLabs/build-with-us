@@ -3,6 +3,8 @@ package com.yubico.eap.quickstart.track.signing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
+import com.yubico.eap.quickstart.R
 import com.yubico.eap.quickstart.helpers.ellipsize
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.SuccessView
@@ -17,7 +19,9 @@ fun SigningTrackView(
     val state by remember(vm) { vm.state }
 
     when (val typedState = state) {
-        is SigningTrackViewModel.State.InProgress -> InProgressView()
+        is SigningTrackViewModel.State.InProgress -> InProgressView(
+            stringResource(R.string.general_waiting_for_yubikey)
+        )
 
         is SigningTrackViewModel.State.Error -> UserInformationView(
             title = typedState.title,
