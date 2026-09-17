@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -53,6 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.yubico.eap.quickstart.logging.YOLOLogger
+import com.yubico.eap.quickstart.track.UserInformationView
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackView
 import com.yubico.eap.quickstart.track.arkg.ARKGTrackViewModel
 import com.yubico.eap.quickstart.track.credentials.CredentialTrackView
@@ -107,6 +111,22 @@ class MainActivity : ComponentActivity() {
                                 Text(getString(R.string.app_name))
                             }
                         )
+                    },
+                    floatingActionButton = {
+                        if (trackNumber == null) {
+                            FloatingActionButton(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                onClick = {
+                                    trackNumber = 1337
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(android.R.drawable.ic_menu_agenda),
+                                    contentDescription = null
+                                )
+                            }
+                        }
                     }
                 ) { innerPadding ->
                     Box(
@@ -133,7 +153,7 @@ class MainActivity : ComponentActivity() {
                                 vm.trackNumber.value = null
                             }
 
-                            index++ -> PpuatTrackView (
+                            index++ -> PpuatTrackView(
                                 vm.trackVm.value as PpuatTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
@@ -159,6 +179,21 @@ class MainActivity : ComponentActivity() {
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
+                            }
+
+                            1337 -> {
+                                val logs = YOLOLogger.logs
+
+                                UserInformationView(
+                                    title = "Current Log",
+                                    message = "",
+                                    informationItems = logs,
+                                    onInformationSelected = { vm.copyToClipBoard(logs[it]) },
+                                    onCopyToClipBoard = vm::copyToClipBoard,
+                                    onConfirm = { trackNumber = null },
+                                    confirmationButtonTitle = "Done",
+                                    onFinished = { trackNumber = null },
+                                )
                             }
 
                             else -> Text("Track $trackNumber not found.")
