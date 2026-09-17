@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.DOMAIN
 import com.yubico.eap.quickstart.helpers.DOMAIN_NAME
 import com.yubico.eap.quickstart.helpers.DerivedPublicKey
-import com.yubico.eap.quickstart.helpers.encode64
 import com.yubico.eap.quickstart.helpers.extractSignature
 import com.yubico.eap.quickstart.helpers.sha256
 import com.yubico.eap.quickstart.math.Arkg.verifySignature
