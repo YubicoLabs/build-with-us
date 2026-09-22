@@ -1,6 +1,5 @@
 package com.yubico.eap.quickstart.helpers
 
-import android.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -555,7 +554,7 @@ class CredentialContainer(
             AlertDialog.Builder(activity)
                 .setTitle("select credential")
                 .setItems(items, listener)
-                .setNegativeButton(R.string.cancel) { dialog, which ->
+                .setNegativeButton(android.R.string.cancel) { dialog, which ->
                     Log.i(tagForLog, "No user selected.")
                     dialog.dismiss()
                     failure()
@@ -588,7 +587,7 @@ class CredentialContainer(
                 AlertDialog.Builder(activity)
                     .setTitle("Please enter your PIN.")
                     .setView(pinEdit)
-                    .setPositiveButton(R.string.ok) { dialog, which ->
+                    .setPositiveButton(android.R.string.ok) { dialog, which ->
                         Log.i(tagForLog, "PIN entered.")
                         dialog.dismiss()
                         lastPinUsed = LastPin(
@@ -597,7 +596,7 @@ class CredentialContainer(
                         )
                         callback(pinEdit.text.toString())
                     }
-                    .setNegativeButton(R.string.cancel) { dialog, which ->
+                    .setNegativeButton(android.R.string.cancel) { dialog, which ->
                         Log.i(tagForLog, "PIN entry cancelled.")
                         dialog.dismiss()
                         callback(null)
