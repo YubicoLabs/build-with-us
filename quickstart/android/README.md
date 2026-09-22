@@ -1,7 +1,7 @@
 # 🤖 Yubico 5.8.0 Android Integration Demo "AID"
 
 This directory contains a unified Android application designed to showcase the new capabilities of the **Firmware 5.8.0
-Beta**. Instead of multiple small samples, this app provides a single interface to test and verify ARKG, PUAT, and
+Beta**. Instead of multiple small samples, this app provides a single interface to test and verify ARKG, PPUAT, and
 expanded storage logic.
 
 ## 📱 App Overview
@@ -11,7 +11,7 @@ implementation for:
 
 - **ARKG (RSA Key Generation & Attestation):** Generate RSA 3072/4096 keys on the YubiKey and retrieve the attestation
   certificate.
-- **PUAT (Physical User Auth Template):** Configure and verify hardware-level user presence policies (
+- **PPUAT (Physical User Auth Template):** Configure and verify hardware-level user presence policies (
   Touch/PIN/Biometric).
 
 <!-- -   **Storage Audit:** A utility to view the expanded capacity (100 FIDO2 resident keys and 64 OATH credentials). -->
