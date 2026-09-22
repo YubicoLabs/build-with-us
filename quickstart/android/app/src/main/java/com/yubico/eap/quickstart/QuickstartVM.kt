@@ -39,8 +39,8 @@ class QuickstartVM(
         var index = 0
         val newTrackVM = when (trackIndex) {
             index++ -> InfoTrackViewModel(application)
-            index++ -> PpuatTrackViewModel(application)
             index++ -> CredentialTrackViewModel(application)
+            index++ -> PpuatTrackViewModel(application)
             index++ -> SigningTrackViewModel(application)
             index++ -> ARKGTrackViewModel(application)
 

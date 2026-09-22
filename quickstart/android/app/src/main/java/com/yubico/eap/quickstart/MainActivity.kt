@@ -137,8 +137,8 @@ class MainActivity : ComponentActivity() {
                             null -> SelectTrackView(
                                 tracks = listOf(
                                     stringResource(R.string.track_info),
-                                    stringResource(R.string.track_ppuat),
                                     stringResource(R.string.track_credential),
+                                    stringResource(R.string.track_ppuat),
                                     stringResource(R.string.track_sign),
                                     stringResource(R.string.track_arkg)
                                 )
@@ -153,15 +153,15 @@ class MainActivity : ComponentActivity() {
                                 vm.trackNumber.value = null
                             }
 
-                            index++ -> PpuatTrackView(
-                                vm.trackVm.value as PpuatTrackViewModel,
+                            index++ -> CredentialTrackView(
+                                vm.trackVm.value as CredentialTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
                             }
 
-                            index++ -> CredentialTrackView(
-                                vm.trackVm.value as CredentialTrackViewModel,
+                            index++ -> PpuatTrackView(
+                                vm.trackVm.value as PpuatTrackViewModel,
                                 onCopyToClipBoard = vm::copyToClipBoard
                             ) {
                                 vm.trackNumber.value = null
