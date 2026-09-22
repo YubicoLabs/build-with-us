@@ -39,3 +39,4 @@ fun ByteArray.encode64(): String = toUrlSafeString(this)
 fun ByteArray.sha256(): ByteArray = SHA256.Digest().digest(this)
 
 operator fun String.times(n: Int): String = (0..<n).joinToString("") { this }
+operator fun Int.times(toRepeat: String): String = toRepeat * this

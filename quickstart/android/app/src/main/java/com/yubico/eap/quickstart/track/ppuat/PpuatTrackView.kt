@@ -42,7 +42,7 @@ fun PpuatTrackView(
 
         is PpuatTrackViewModel.State.ListCredentialsWithToken -> UserInformationView(
             title = "Credentials Found",
-            message = "The following credentials were found for token ${typedState.token.toHexString()}:"
+            message = "The following credentials were found for a token with length ${typedState.token.size}:",
             informationItems = typedState.credentials,
             confirmationButtonTitle = "Delete Token",
             onConfirm = vm::deleteToken,

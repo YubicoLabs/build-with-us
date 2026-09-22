@@ -445,7 +445,8 @@ class CredentialContainer(
                 null
             )
 
-            Log.i(tagForLog, token.toHexString())
+            // print blinded token as debug message. Remember: Never print tokens in production.
+            Log.d(tagForLog, "Token created: ${token.size * "•"}.")
             operation.success(token)
         } catch (th: Throwable) {
             Log.e(tagForLog, "Couldn't create a session.", th)
