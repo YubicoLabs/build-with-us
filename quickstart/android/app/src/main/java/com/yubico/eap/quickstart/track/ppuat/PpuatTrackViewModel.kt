@@ -117,11 +117,12 @@ class PpuatTrackViewModel(
                             "Failed to list credentials using the token.\n\nReason: ${th.message ?: th}",
                             Log.logs
                         )
+                    }
                 },
                 failureCallback = {
                     state.value = State.Error(
                         "No UV token credentials",
-                        "What did you do??\n\n$it",
+                        "Caught this exception:\n\n$it",
                         Log.logs
                     )
                 }
