@@ -411,6 +411,8 @@ class CredentialContainer(
             operation.success(credentials)
         } catch (th: Throwable) {
             operation.failure(th)
+        } finally {
+            connection.close()
         }
     }
 
@@ -422,11 +424,12 @@ class CredentialContainer(
         try {
             val session = Ctap2Session(connection)
             val info = session.info
-            session.close()
 
             operation.success(info)
         } catch (th: Throwable) {
             operation.failure(th)
+        } finally {
+            connection.close()
         }
     }
 
@@ -451,6 +454,8 @@ class CredentialContainer(
         } catch (th: Throwable) {
             Log.e(tagForLog, "Couldn't create a session.", th)
             operation.failure(th)
+        } finally {
+            connection.close()
         }
     }
 
