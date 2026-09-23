@@ -21,7 +21,9 @@ fun ARKGTrackView(
     val state by remember(vm) { vm.state }
 
     when (val typedState = state) {
-        is ARKGTrackViewModel.State.InProgress -> InProgressView()
+        is ARKGTrackViewModel.State.InProgress -> InProgressView(
+            stringResource(R.string.general_waiting_for_yubikey)
+        )
 
         is ARKGTrackViewModel.State.Error -> UserInformationView(
             title = typedState.title,

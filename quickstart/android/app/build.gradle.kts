@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.bouncycastle)
     implementation(libs.yubikit.android)
+    implementation(libs.yubikit.management)
     implementation(libs.yubikit.fido.android.ui)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

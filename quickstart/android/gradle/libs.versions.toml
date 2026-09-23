@@ -1,14 +1,14 @@
 [versions]
-agp = "9.1.1"
-coreKtx = "1.18.0"
-lifecycleRuntimeKtx = "2.10.0"
+agp = "9.4.0"
+coreKtx = "1.19.0"
+lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
-kotlin = "2.3.10"
-composeBom = "2026.03.00"
+kotlin = "2.4.20"
+composeBom = "2026.09.00"
 
 logback = "3.0.0"
-yubikit = "3.2.0"
-bouncycastle = "1.83"
+yubikit = "3.2.1"
+bouncycastle = "1.86"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +25,7 @@ logback = { group = "com.github.tony19", name = "logback-android", version.ref =
 
 yubikit-fido-android-ui = { group = "com.yubico.yubikit", name = "fido-android-ui", version.ref = "yubikit" }
 yubikit-android = { group = "com.yubico.yubikit", name = "android", version.ref = "yubikit" }
+yubikit-management = { group = "com.yubico.yubikit", name = "management", version.ref = "yubikit" }
 bouncycastle = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncycastle" }
 
 [plugins]

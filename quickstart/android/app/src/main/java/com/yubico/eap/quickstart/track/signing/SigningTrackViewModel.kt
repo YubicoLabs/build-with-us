@@ -5,6 +5,8 @@ import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.yubico.eap.quickstart.helpers.DOMAIN
+import com.yubico.eap.quickstart.helpers.DOMAIN_NAME
 import com.yubico.eap.quickstart.helpers.DerivedPublicKey
 import com.yubico.eap.quickstart.helpers.extractSignature
 import com.yubico.eap.quickstart.helpers.sha256
@@ -50,10 +52,7 @@ class SigningTrackViewModel(
             clearLogs()
             state.value = State.InProgress
 
-            val domain = "demo.yubico.com"
-            val domainName = "Yubico Demo"
-
-            val credential = createCredential(client, domain, domainName)
+            val credential = createCredential(client, DOMAIN, DOMAIN_NAME)
                 ?: throw IllegalStateException("Could not create credential.")
 
             val publicKey = credential.derivePublicKeys(keyCount = 1)?.first()
@@ -67,7 +66,7 @@ class SigningTrackViewModel(
                 publicKey,
                 message,
                 messageSha256,
-                domain,
+                DOMAIN,
                 credential,
             ) ?: State.Error("NO VER", "Could not verify.", Log.logs)
         }

@@ -5,6 +5,8 @@ import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.yubico.eap.quickstart.helpers.DOMAIN
+import com.yubico.eap.quickstart.helpers.DOMAIN_NAME
 import com.yubico.eap.quickstart.helpers.encode64
 import com.yubico.eap.quickstart.helpers.extractCredentialId
 import com.yubico.eap.quickstart.track.TrackViewModel
@@ -52,13 +54,11 @@ class CredentialTrackViewModel(
             clearLogs()
             state.value = State.InProgress
 
-            val domain = "demo.yubico.com"
-            val domainName = "Yubico Demo"
 
             val (createOption, createResponse, attestOption, attestResponse) = createAndAttestCredential(
                 client,
-                domain,
-                domainName
+                DOMAIN,
+                DOMAIN_NAME
             ) ?: throw IllegalStateException("Could not create credential.")
 
             state.value = State.CredentialCreatedAndAsserted(
@@ -106,9 +106,9 @@ class CredentialTrackViewModel(
             ],
             "authenticatorSelection": {
               "authenticatorAttachment": "cross-platform",
-              "residentKey": "discouraged",
+              "residentKey": "required",
               "userVerification": "discouraged",
-              "requireResidentKey": false
+              "requireResidentKey": true
             },
             "attestation": "none"
         }

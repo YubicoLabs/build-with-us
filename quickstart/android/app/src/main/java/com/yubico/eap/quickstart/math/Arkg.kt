@@ -265,9 +265,9 @@ fun createSignCredentialCreateOption(
             ],
             "authenticatorSelection": {
               "authenticatorAttachment": "cross-platform",
-              "residentKey": "discouraged",
+              "residentKey": "required",
               "userVerification": "discouraged",
-              "requireResidentKey": false
+              "requireResidentKey": true
             },
             "attestation": "none",
             "extensions": {

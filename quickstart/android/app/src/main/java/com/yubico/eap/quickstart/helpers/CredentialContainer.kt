@@ -1,4 +1,4 @@
-package com.yubico.eap.quickstart.track.info
+package com.yubico.eap.quickstart.helpers
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -10,9 +10,11 @@ import android.util.Base64.NO_WRAP
 import android.util.Base64.URL_SAFE
 import android.util.Base64.encodeToString
 import android.widget.EditText
-import com.yubico.eap.quickstart.track.info.Operation.CreateOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetInfoOperation
-import com.yubico.eap.quickstart.track.info.Operation.GetOperation
+import com.yubico.eap.quickstart.helpers.Operation.CreateOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetInfoOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetUvTokenOperation
+import com.yubico.eap.quickstart.helpers.Operation.GetWithUvOperation
 import com.yubico.yubikit.android.YubiKitManager
 import com.yubico.yubikit.android.transport.nfc.NfcConfiguration
 import com.yubico.yubikit.android.transport.nfc.NfcNotAvailable
@@ -27,11 +29,17 @@ import com.yubico.yubikit.core.util.Callback
 import com.yubico.yubikit.fido.client.MultipleAssertionsAvailable
 import com.yubico.yubikit.fido.client.WebAuthnClient
 import com.yubico.yubikit.fido.client.clientdata.ClientDataProvider
+import com.yubico.yubikit.fido.ctap.ClientPin
+import com.yubico.yubikit.fido.ctap.CredentialManagement
 import com.yubico.yubikit.fido.ctap.Ctap2Session
+import com.yubico.yubikit.fido.ctap.PinUvAuthProtocolV2
 import com.yubico.yubikit.fido.webauthn.PublicKeyCredential
 import com.yubico.yubikit.fido.webauthn.PublicKeyCredentialCreationOptions
 import com.yubico.yubikit.fido.webauthn.PublicKeyCredentialDescriptor
+import com.yubico.yubikit.fido.webauthn.PublicKeyCredentialParameters
 import com.yubico.yubikit.fido.webauthn.PublicKeyCredentialRequestOptions
+import com.yubico.yubikit.management.DeviceInfo
+import com.yubico.yubikit.management.ManagementSession
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.Duration.Companion.seconds
@@ -39,14 +47,82 @@ import kotlin.time.TimeSource
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 import com.yubico.eap.quickstart.logging.YOLOLogger.Companion as Log
 
+interface Pinless
+
 sealed class Operation(
     open val failure: (Throwable) -> Unit,
 ) {
-
-    data class GetInfoOperation(
-        val success: (Ctap2Session.InfoData) -> Unit,
+    data class GetUvTokenOperation(
+        val rpId: String,
+        val success: (serialNumber: Int, token: ByteArray) -> Unit,
         override val failure: (Throwable) -> Unit,
     ) : Operation(failure)
+
+    data class GetInfoOperation(
+        val success: (Information) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure), Pinless {
+        data class Information(
+            val device: DeviceInformation,
+            val session: SessionInformation,
+        ) {
+            data class DeviceInformation(
+                val enabledCapabilities: Int?,
+                val autoEjectTimeout: Short?,
+                val challengeResponseTimeout: Byte?,
+                val deviceFlags: Int?,
+                val nfcRestricted: Boolean?,
+                val serialNumber: Int,
+                val deviceVersion: String,
+                val deviceVersionQualifier: String,
+                val formFactor: String,
+                val supportedCapabilities: Int,
+                val isLocked: Boolean,
+                val isFips: Boolean,
+                val isSky: Boolean,
+                val partNumber: String,
+                val fipsCapable: Int,
+                val fipsApproved: Int,
+                val pinComplexity: Boolean,
+                val resetBlocked: Int,
+                val fpsVersion: String,
+                val stmVersion: String,
+            )
+
+            data class SessionInformation(
+                val versions: List<String>,
+                val extensions: List<String>,
+                val aaguid: ByteArray,
+                val maxMsgSize: Int,
+                val options: Map<String, Any?>,
+                val pinUvAuthProtocols: List<Int>,
+                val maxCredentialCountInList: Int?,
+                val maxCredentialIdLength: Int?,
+                val transports: List<String>,
+                val algorithms: List<PublicKeyCredentialParameters>,
+                val maxSerializedLargeBlobArray: Int,
+                val forcePinChange: Boolean,
+                val minPinLength: Int,
+                val firmwareVersion: Int?,
+                val maxCredBlobLength: Int,
+                val maxRpidsForSetMinPinLength: Int,
+                val preferredPlatformUvAttempts: Int?,
+                val uvModality: Int,
+                val certifications: Map<String, Any>,
+                val remainingDiscoverableCredentials: Int?,
+                val vendorPrototypeConfigCommands: List<Int>?,
+                val attestationFormats: List<String>,
+                val uvCountSinceLastPinEntry: Int?,
+                val longTouchForReset: Boolean,
+                val encIdentifier: ByteArray?,
+                val transportsForReset: List<String>,
+                val pinComplexityPolicy: Boolean?,
+                val pinComplexityPolicyUrl: ByteArray?,
+                val maxPinLength: Int,
+                val authenticatorConfigCommands: List<Int>?,
+            )
+        }
+    }
 
     data class CreateOperation(
         val options: PublicKeyCredentialCreationOptions,
@@ -59,6 +135,12 @@ sealed class Operation(
         val success: (credential: PublicKeyCredential) -> Unit,
         override val failure: (Throwable) -> Unit,
     ) : Operation(failure)
+
+    data class GetWithUvOperation(
+        val token: ByteArray,
+        val success: (credentials: List<CredentialManagement.CredentialData>) -> Unit,
+        override val failure: (Throwable) -> Unit,
+    ) : Operation(failure), Pinless
 }
 
 private data class LastPin(
@@ -100,6 +182,11 @@ class CredentialContainer(
         }
     }
 
+    private fun stopDiscoveries() {
+        manager.stopNfcDiscovery(activity)
+        manager.stopUsbDiscovery()
+    }
+
     private var lastOperation: Operation? = null
 
     private var lastPinUsed: LastPin? = null
@@ -116,9 +203,13 @@ class CredentialContainer(
         lastOperation =
             CreateOperation(
                 options = options,
-                success = successCallback,
+                success = {
+                    stopDiscoveries()
+                    successCallback(it)
+                },
                 failure = {
                     lastPinUsed = null
+                    stopDiscoveries()
                     failureCallback(it)
                 }
             )
@@ -126,16 +217,65 @@ class CredentialContainer(
 
     fun getInfo(
         failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
-        successCallback: (Ctap2Session.InfoData) -> Unit,
+        successCallback: (GetInfoOperation.Information) -> Unit,
     ) {
         Log.i(tagForLog, "yubico getinfo implementation called.")
         startDiscoveries()
 
         lastOperation =
             GetInfoOperation(
-                success = successCallback,
+                success = {
+                    stopDiscoveries()
+                    successCallback(it)
+                },
                 failure = {
                     lastPinUsed = null
+                    stopDiscoveries()
+                    failureCallback(it)
+                }
+            )
+    }
+
+    fun getPpuatToken(
+        rpId: String,
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (serialNumber: Int, token: ByteArray) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico ppuat creation called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetUvTokenOperation(
+                rpId = rpId,
+                success = { serialNumber, token ->
+                    stopDiscoveries()
+                    successCallback(serialNumber, token)
+                },
+                failure = {
+                    lastPinUsed = null
+                    stopDiscoveries()
+                    failureCallback(it)
+                }
+            )
+    }
+
+    fun getCredentialsWithUvToken(
+        token: ByteArray,
+        failureCallback: (Throwable) -> Unit = { Log.e(tagForLog, "NO INFO", it) },
+        successCallback: (List<CredentialManagement.CredentialData>) -> Unit,
+    ) {
+        Log.i(tagForLog, "yubico credentials with uv called.")
+        startDiscoveries()
+
+        lastOperation =
+            GetWithUvOperation(
+                token = token,
+                success = {
+                    stopDiscoveries()
+                    successCallback(it)
+                },
+                failure = {
+                    stopDiscoveries()
                     failureCallback(it)
                 }
             )
@@ -153,9 +293,13 @@ class CredentialContainer(
         lastOperation =
             GetOperation(
                 options = options,
-                success = successCallback,
+                success = {
+                    stopDiscoveries()
+                    successCallback(it)
+                },
                 failure = {
                     lastPinUsed = null
+                    stopDiscoveries()
                     failureCallback(it)
                 },
             )
@@ -204,15 +348,29 @@ class CredentialContainer(
                         device,
                         operation
                     )
+
+                is GetUvTokenOperation ->
+                    getUvTokenWithDevice(
+                        device,
+                        operation,
+                        pin!!
+                    )
+
+                is GetWithUvOperation ->
+                    getWithUvAndDevice(
+                        device,
+                        operation,
+                    )
             }
         } catch (e: Throwable) {
             Log.e(tagForLog, "Something went wrong.", e)
+            operation.failure(e)
         }
     }
 
     private fun deviceConnected(device: YubiKeyDevice) {
         lastOperation?.let { operation ->
-            if (operation is GetInfoOperation) {
+            if (operation is Pinless) {
                 routeToCorrectMethodWithPin(operation, device, null)
             } else {
                 askForPin(operation, device)
@@ -295,16 +453,85 @@ class CredentialContainer(
         )
     }
 
+    private fun getWithUvAndDevice(
+        device: YubiKeyDevice,
+        operation: GetWithUvOperation,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        try {
+            val session = Ctap2Session(connection)
+            val management = CredentialManagement(
+                session,
+                PinUvAuthProtocolV2(),
+                operation.token
+            )
+
+            val credentials = management.enumerateRps().flatMap { rp ->
+                management.enumerateCredentials(
+                    rp.rpIdHash
+                )
+            }
+
+            operation.success(credentials)
+        } catch (th: Throwable) {
+            operation.failure(th)
+        } finally {
+            connection.close()
+        }
+    }
+
     private fun getInfoWithDevice(
         device: YubiKeyDevice,
         operation: GetInfoOperation,
     ) {
         val connection = device.openConnection(SmartCardConnection::class.java)
-        val session = Ctap2Session(connection)
-        val info = session.info
-        session.close()
+        try {
+            val session = Ctap2Session(connection)
+            val sessionInfo = session.info
 
-        operation.success(info)
+            val management = ManagementSession(connection)
+            val deviceInfo = management.deviceInfo
+
+            operation.success(
+                GetInfoOperation.Information(
+                    device = deviceInfo.toDeviceInformation(device),
+                    session = sessionInfo.toSessionInformation(),
+                )
+            )
+        } catch (th: Throwable) {
+            operation.failure(th)
+        } finally {
+            connection.close()
+        }
+    }
+
+    private fun getUvTokenWithDevice(
+        device: YubiKeyDevice,
+        operation: GetUvTokenOperation,
+        pin: String,
+    ) {
+        val connection = device.openConnection(SmartCardConnection::class.java)
+        try {
+            val session = Ctap2Session(connection)
+            val clientPin = ClientPin(session, PinUvAuthProtocolV2())
+            val token = clientPin.getPinToken(
+                pin.toCharArray(),
+                ClientPin.PIN_PERMISSION_PCMR,
+                null
+            )
+
+            val management = ManagementSession(connection)
+            val serialNumber = management.deviceInfo.serialNumber
+
+            // print blinded token as debug message. Remember: Never print tokens in production.
+            Log.d(tagForLog, "Token for device $serialNumber created: ${token.size * "•"}.")
+            operation.success(serialNumber ?: -1, token)
+        } catch (th: Throwable) {
+            Log.e(tagForLog, "Couldn't create a session.", th)
+            operation.failure(th)
+        } finally {
+            connection.close()
+        }
     }
 
     private fun getWithSession(
@@ -465,6 +692,64 @@ class CredentialContainer(
     }
 }
 
+private fun DeviceInfo.toDeviceInformation(device: YubiKeyDevice): GetInfoOperation.Information.DeviceInformation =
+    GetInfoOperation.Information.DeviceInformation(
+        serialNumber = serialNumber ?: -1,
+        deviceVersion = version.toString(),
+        deviceVersionQualifier = versionQualifier.toString(),
+        formFactor = formFactor.name,
+        supportedCapabilities = getSupportedCapabilities(device.transport),
+        isLocked = isLocked,
+        isFips = isFips,
+        isSky = isSky,
+        partNumber = partNumber ?: "",
+        fipsCapable = fipsCapable,
+        fipsApproved = fipsApproved,
+        pinComplexity = pinComplexity,
+        resetBlocked = resetBlocked,
+        fpsVersion = fpsVersion?.toString() ?: "-1",
+        stmVersion = stmVersion?.toString() ?: "-1",
+        enabledCapabilities = config.getEnabledCapabilities(device.transport),
+        autoEjectTimeout = config.autoEjectTimeout,
+        challengeResponseTimeout = config.challengeResponseTimeout,
+        deviceFlags = config.deviceFlags,
+        nfcRestricted = config.nfcRestricted,
+    )
+
+private fun Ctap2Session.InfoData.toSessionInformation(): GetInfoOperation.Information.SessionInformation =
+    GetInfoOperation.Information.SessionInformation(
+        versions = versions,
+        extensions = extensions,
+        aaguid = aaguid,
+        maxMsgSize = maxMsgSize,
+        options = options,
+        pinUvAuthProtocols = pinUvAuthProtocols,
+        maxCredentialCountInList = maxCredentialCountInList,
+        maxCredentialIdLength = maxCredentialIdLength,
+        transports = transports,
+        algorithms = algorithms,
+        maxSerializedLargeBlobArray = maxSerializedLargeBlobArray,
+        forcePinChange = forcePinChange,
+        minPinLength = minPinLength,
+        firmwareVersion = firmwareVersion,
+        maxCredBlobLength = maxCredBlobLength,
+        maxRpidsForSetMinPinLength = maxRpidsForSetMinPinLength,
+        preferredPlatformUvAttempts = preferredPlatformUvAttempts,
+        uvModality = uvModality,
+        certifications = certifications,
+        remainingDiscoverableCredentials = remainingDiscoverableCredentials,
+        vendorPrototypeConfigCommands = vendorPrototypeConfigCommands,
+        attestationFormats = attestationFormats,
+        uvCountSinceLastPinEntry = uvCountSinceLastPinEntry,
+        longTouchForReset = longTouchForReset,
+        encIdentifier = encIdentifier,
+        transportsForReset = transportsForReset,
+        pinComplexityPolicy = pinComplexityPolicy,
+        pinComplexityPolicyUrl = pinComplexityPolicyUrl,
+        maxPinLength = maxPinLength,
+        authenticatorConfigCommands = authenticatorConfigCommands,
+    )
+
 private fun Byte.toHumanReadable(): String =
     CtapException::class.java.declaredFields.filter {
         it.name.startsWith("ERR_")
@@ -474,7 +759,7 @@ private fun Byte.toHumanReadable(): String =
         ?: "Unknown CTAP ERROR"
 
 
-private fun getClientOptions(
+fun getClientOptions(
     type: String,
     challenge: String,
     origin: String,

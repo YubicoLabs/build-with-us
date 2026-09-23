@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yubico.eap.quickstart.R
 import com.yubico.eap.quickstart.track.InProgressView
 import com.yubico.eap.quickstart.track.UserInformationView
 
@@ -31,7 +32,9 @@ fun CredentialTrackView(
     val state by remember(vm) { vm.state }
 
     when (val typedState = state) {
-        is CredentialTrackViewModel.State.InProgress -> InProgressView()
+        is CredentialTrackViewModel.State.InProgress -> InProgressView(
+            stringResource(R.string.general_waiting_for_yubikey)
+        )
 
         is CredentialTrackViewModel.State.Error -> UserInformationView(
             title = typedState.title,
