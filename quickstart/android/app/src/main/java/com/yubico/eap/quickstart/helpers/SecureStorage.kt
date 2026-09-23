@@ -14,18 +14,23 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class SecureStorage(
-    context: Context,
     val keyAlias: String = "secure_alias",
-    fileName: String = "secure_data.enc"
 ) {
-    private val file = File(context.filesDir, fileName)
     private val androidKeyStore = "AndroidKeyStore"
     private val transformation = "AES/GCM/NoPadding"
 
     /**
      * Encrypts the byte array and saves to disk.
+     *
+     *
      */
-    fun store(data: ByteArray) {
+    fun store(
+        context: Context,
+        fileName: String,
+        data: ByteArray
+    ) {
+        val file = File(context.filesDir, fileName)
+
         val cipher = Cipher.getInstance(transformation)
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
 
@@ -45,7 +50,12 @@ class SecureStorage(
      *
      * @return null if not present, null if not correct bytearray of stored secured data.
      */
-    fun retrieve(): ByteArray? {
+    fun retrieve(
+        context: Context,
+        fileName: String,
+    ): ByteArray? {
+        val file = File(context.filesDir, fileName)
+
         if (!file.exists()) return ByteArray(0)
 
         return try {
@@ -71,7 +81,9 @@ class SecureStorage(
 
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(androidKeyStore).apply { load(null) }
-        keyStore.getKey(keyAlias, null)?.let { return it as SecretKey }
+        keyStore.getKey(keyAlias, null)?.let {
+            return it as SecretKey
+        }
 
         // Key doesn't exist, generate it
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)

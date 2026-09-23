@@ -4,16 +4,14 @@ import android.app.Activity
 import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.yubico.eap.quickstart.helpers.CredentialContainer
 import com.yubico.eap.quickstart.helpers.DOMAIN
 import com.yubico.eap.quickstart.helpers.SecureStorage
 import com.yubico.eap.quickstart.track.TrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 import com.yubico.eap.quickstart.logging.YOLOLogger as Log
 
 class PpuatTrackViewModel(
@@ -34,6 +32,7 @@ class PpuatTrackViewModel(
         object NoTokenPresent : State()
 
         data class TokenPresent(
+            val serialnumber: Int,
             val token: ByteArray
         ) : State()
 
@@ -47,7 +46,7 @@ class PpuatTrackViewModel(
 
     private var container: CredentialContainer? = null
 
-    private val secureStorage: SecureStorage = SecureStorage(getApplication())
+    private val secureStorage: SecureStorage = SecureStorage()
 
     override suspend fun execute(client: FidoClient, activity: Activity) {
         viewModelScope.launch {
@@ -55,13 +54,26 @@ class PpuatTrackViewModel(
             state.value = State.WaitingForApp
 
             container = CredentialContainer(activity)
+            container?.getInfo(
+                successCallback = { info ->
+                    val serialNumber = info.device.serialNumber
 
-            val storedToken = checkStorageForToken()
-            state.value = if (storedToken != null && storedToken.isNotEmpty()) {
-                State.TokenPresent(storedToken)
-            } else {
-                State.NoTokenPresent
-            }
+                    val storedToken = checkStorageForToken(
+                        serialNumber
+                    )
+                    state.value = if (storedToken != null && storedToken.isNotEmpty()) {
+                        State.TokenPresent(
+                            serialNumber,
+                            storedToken
+                        )
+                    } else {
+                        State.NoTokenPresent
+                    }
+                },
+                failureCallback = {
+                    state.value = State.NoTokenPresent
+                }
+            )
         }
     }
 
@@ -78,15 +90,13 @@ class PpuatTrackViewModel(
                         Log.logs
                     )
                 },
-                successCallback = { token ->
-                    storeToken(token)
+                successCallback = { serialNumber, token ->
+                    storeToken(serialNumber, token)
 
-                    viewModelScope.launch {
-                        delay(0.5.seconds)
-                        state.value = State.TokenPresent(
-                            token
-                        )
-                    }
+                    state.value = State.TokenPresent(
+                        serialNumber,
+                        token
+                    )
                 },
             )
         }
@@ -132,28 +142,52 @@ class PpuatTrackViewModel(
 
     fun deleteToken() {
         viewModelScope.launch {
-            kotlinx.coroutines.withContext(Dispatchers.IO) {
-                deleteStorageInToken()
-            }
-            state.value = State.NoTokenPresent
+            container?.getInfo(
+                successCallback = { infoData ->
+                    deleteStorageInToken(
+                        infoData.device.serialNumber
+                    )
+
+                    state.value = State.NoTokenPresent
+                },
+                failureCallback = {},
+            )
         }
     }
 
-    private fun storeToken(plain: ByteArray) = try {
-        secureStorage.store(plain)
+    private fun storeToken(
+        serialnumber: Int,
+        plain: ByteArray
+    ) = try {
+        secureStorage.store(
+            application,
+            serialnumber.toHexString(),
+            plain
+        )
     } catch (th: Throwable) {
         Log.e("WRITE", "Could not write secure .", th)
     }
 
-    private fun checkStorageForToken(): ByteArray? = try {
-        secureStorage.retrieve()
+    private fun checkStorageForToken(
+        serialNumber: Int
+    ): ByteArray? = try {
+        secureStorage.retrieve(
+            application,
+            serialNumber.toHexString()
+        )
     } catch (th: Throwable) {
         Log.e("CHECK", "Couldn't check secure file.", th)
         null
     }
 
-    private fun deleteStorageInToken() = try {
-        secureStorage.store(byteArrayOf())
+    private fun deleteStorageInToken(
+        serialNumber: Int
+    ) = try {
+        secureStorage.store(
+            application,
+            serialNumber.toHexString(),
+            byteArrayOf()
+        )
     } catch (th: Throwable) {
         Log.e("DELNO", "Couldn't delete secure file.", th)
     }
