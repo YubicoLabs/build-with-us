@@ -34,7 +34,7 @@ The app is divided into feature-specific modules for easy copy-pasting into your
 
 ```text
 android-demo/
-├── app/src/main/java/com/yubico/eap/quickstart/track/
+├── app/src/main/java/com/yubico/quickstart/track/
 │   ├── credentials
 │   │   ├── CredentialTrackView.kt
 │   │   ├── CredentialViewModel.kt
@@ -50,7 +50,7 @@ android-demo/
 │   ├── signing
 │   │   ├── SigningTrackView.kt
 │   │   ├── SigningTrackViewModel.kt
-├── app/src/main/java/com/yubico/eap/quickstart/math
+├── app/src/main/java/com/yubico/quickstart/math
 │   ├── Arkg.kt # Cryptography abstraction using bouncy castle (here be dragons)
 ```
 

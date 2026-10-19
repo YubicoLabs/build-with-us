@@ -1,0 +1,70 @@
+package com.yubico.quickstart
+
+import android.app.Activity
+import android.app.Application
+import android.content.ClipData
+import android.content.ClipboardManager
+import androidx.activity.ComponentActivity
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.application
+import androidx.lifecycle.viewModelScope
+import com.yubico.quickstart.track.arkg.ARKGTrackViewModel
+import com.yubico.quickstart.track.credentials.CredentialTrackViewModel
+import com.yubico.quickstart.track.info.InfoTrackViewModel
+import com.yubico.quickstart.track.ppuat.PpuatTrackViewModel
+import com.yubico.quickstart.track.signing.SigningTrackViewModel
+import com.yubico.yubikit.fido.android.ui.FidoClient
+import kotlinx.coroutines.launch
+
+class QuickstartVM(
+    application: Application
+) : AndroidViewModel(application) {
+
+    val trackNumber: MutableState<Int?> = mutableStateOf(null)
+
+    val trackVm: MutableState<ViewModel?> = mutableStateOf(null)
+
+    private lateinit var fido: FidoClient
+
+    fun setup(activity: ComponentActivity) {
+        fido = FidoClient(
+            activity = activity,
+        )
+    }
+
+    fun startTrack(trackIndex: Int, activity: Activity) {
+        var index = 0
+        val newTrackVM = when (trackIndex) {
+            index++ -> InfoTrackViewModel(application)
+            index++ -> CredentialTrackViewModel(application)
+            index++ -> PpuatTrackViewModel(application)
+            index++ -> SigningTrackViewModel(application)
+            index++ -> ARKGTrackViewModel(application)
+
+            else -> TODO("Implement track with index $trackIndex.")
+        }
+
+        trackVm.value = newTrackVM
+        trackNumber.value = trackIndex
+
+        viewModelScope.launch {
+            newTrackVM.execute(fido, activity)
+        }
+    }
+
+    fun copyToClipBoard(message: String) {
+        application
+            .getSystemService(
+                /*serviceClass =*/ ClipboardManager::class.java
+            )
+            .setPrimaryClip(
+                ClipData.newPlainText(
+                    /*label =*/ "Quickstart",
+                    /*text =*/ message
+                )
+            )
+    }
+}

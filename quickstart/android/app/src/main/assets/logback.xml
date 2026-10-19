@@ -2,7 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://tony19.github.io/logback-android/xml https://cdn.jsdelivr.net/gh/tony19/logback-android/logback.xsd" >
 
-    <appender name="logcat" class="com.yubico.eap.quickstart.logging.YOLOLogger">
+    <appender name="logcat" class="com.yubico.quickstart.logging.YOLOLogger">
         <encoder>
             <pattern>%msg</pattern>
         </encoder>
