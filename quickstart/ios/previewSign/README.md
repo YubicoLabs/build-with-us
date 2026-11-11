@@ -6,7 +6,7 @@ The extension uses ARKG (Asynchronous Remote Key Generation) to generate unlimit
 
 Requires YubiKey firmware 5.8+. See the main [project README](../README.md) for setup instructions.
 
-> **Early Access Only.** This quickstart requires Yubico Swift SDK release/1.3.0 specifically for the Early Access Program. The previewSign extension, algorithm ID (-65539), and all SDK APIs shown here are not final and may change before general availability. Do not use this in production.
+This quickstart requires Yubico Swift SDK release/1.3.0. The previewSign extension, algorithm ID (-65539), and all SDK APIs shown here are not final and may change before general availability. Do not use this in production.
 
 ## When to use this
 

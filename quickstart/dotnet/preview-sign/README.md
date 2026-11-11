@@ -10,7 +10,7 @@ previewSign is algorithm-agnostic by design, so future firmware versions may off
 
 Requires YubiKey firmware 5.8+ and the Yubico .NET SDK (`Yubico.YubiKey`) 1.17.0+. See the main [project README](../README.md) for setup instructions.
 
-> **Early Access Only.** The previewSign extension, its algorithm, and the algorithm ID (-65539) are not final and will change before general availability. Do not use this in production.
+The previewSign extension, its algorithm, and the algorithm ID (-65539) are not final and will change before general availability. Do not use this in production.
 
 > **Two sides: client and relying party.** previewSign splits into a client side and a relying-party (server) side. The client talks to the YubiKey: it enables the extension, reads the generated key back, requests a signature, and reads the signature back (Steps A and C below). This is what the `Yubico.YubiKey` package ships, and what this .NET quickstart does. The relying-party side derives public keys offline (Step B) and verifies signatures (Step D). The SDK does not expose those calls as public API because they need no YubiKey and run on your server. The companion [Python RP quickstart](../../python/preview-sign-rp) handles Steps B and D, and this demo pairs with it directly: it prints the values the RP needs and prompts you to paste the RP's results back in.
 

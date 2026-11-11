@@ -46,7 +46,7 @@ Visit the [**/quickstart**](./quickstart) directory for platform-specific demos:
 
 ## 🚀 Getting Started
 
-1.  **Hardware:** Ensure you have a YubiKey provided through the Yubico Early Access Program ("dev" or "eap" edged on the case of it)
+1.  **Hardware:** Ensure you have at least a YubiKey 5.8 or a beta provided through a Yubico program ("dev" or similar edged on the case of it)
 2.  **SDKs:** Use the latest versions of our SDKs (available on NuGet, CocoaPods, and Maven) that support the 5.8.0 command sets.
 3.  **Explore:** Dive into the `/quickstart` folder and start building.
 
@@ -55,10 +55,9 @@ Visit the [**/quickstart**](./quickstart) directory for platform-specific demos:
 ## 📝 Feedback & Contributions
 
 This is a **Beta** release. Your feedback is what makes our hardware better.
-* Found a bug in the demo code? Open an [**Issue**](https://github.com/yubicolabs/early-access-program/issues/new?title=[Beta%20Feedback]%20&body=Please%20describe%20the%20issue:).
-* Have an optimization for the implementation? Submit a [**Pull Request**](https://github.com/yubicolabs/early-access-program/pulls/new).
-* General firmware feedback? Please use the official EAP email yubico com unicated.
-* Want to join this program? Fill out the application form under https://www.yubico.com/yubikey-5-8-early-access.
+* Found a bug in the demo code? Open an [**Issue**](https://github.com/yubicolabs/build-with-us/issues/new?title=[Beta%20Feedback]%20&body=Please%20describe%20the%20issue:).
+* General firmware feedback? Please feel free to leave an [issue in this repository](https://github.com/yubicolabs/build-with-us/issues/new/?title=Feedback).
+* Have an optimization for the implementation? Submit a [**Pull Request**](https://github.com/yubicolabs/build-with-us/pulls/new).
 
 ## ⚖️ Disclaimer
 *This firmware is for testing purposes only. Beta hardware should not be used for primary production credentials, as beta firmware is not eligible for long-term security guarantees or field updates. Same is true for any software discussed here: Those are in a beta state and will be subject to change without notice.*

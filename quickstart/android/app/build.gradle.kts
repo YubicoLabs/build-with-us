@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.yubico.eap.quickstart"
+    namespace = "com.yubico.quickstart"
     compileSdk {
         version = release(37) {
             minorApiLevel = 0
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.yubico.eap.quickstart"
+        applicationId = "com.yubico.quickstart"
         minSdk = 31
         targetSdk = 37
         versionCode = 1

@@ -57,8 +57,8 @@ YubiKey 5.8 implements the latest CTAP 2.3 UX enhancements, including Persistent
 
 ## 🐞 Encountered an Integration Bug?
 
-If the sample code isn't behaving as expected with your EAP hardware, please let us know immediately.
+If the sample code isn't behaving as expected with your hardware, please let us know immediately.
 
 [👉 Report a Quickstart Bug][new-issue]
 
-[new-issue]: https://github.com/yubicolabs/early-access-program/issues/new?title=[Quickstart%20Bug]%20&labels=bug,quickstart,5.8.0&body=**Platform:**%20(iOS/Android/Dotnet)%0A**Issue:**%20Describe%20what%20happened.
+[new-issue]: https://github.com/yubicolabs/build-with-us/issues/new?title=[Quickstart%20Bug]%20&labels=bug,quickstart,5.8.0&body=**Platform:**%20(iOS/Android/Dotnet)%0A**Issue:**%20Describe%20what%20happened.
