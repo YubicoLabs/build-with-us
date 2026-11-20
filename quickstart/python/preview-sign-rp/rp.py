@@ -96,7 +96,9 @@ def do_derive(public_key_b64: str = "", context: str = "", ikm_hex: str = ""):
         try:
             ikm = bytes.fromhex(ikm_hex)
         except ValueError:
-            print("\n  Error: --ikm must be a hex string (e.g. 64 hex chars for 32 bytes).")
+            print(
+                "\n  Error: --ikm must be a hex string (e.g. 64 hex chars for 32 bytes)."
+            )
             sys.exit(1)
     else:
         ikm = os.urandom(32)
@@ -135,13 +137,11 @@ def do_verify(public_key_b64: str = "", message: str = "", signature_b64: str = 
             print("\n  Error: --signature is not valid base64url.")
             sys.exit(1)
     else:
-        signature = _prompt_bytes(
-            "Paste the signature from your client's Step C:"
-        )
+        signature = _prompt_bytes("Paste the signature from your client's Step C:")
 
     if not message:
         message = _prompt_str(
-            'Enter the message that was signed:',
+            "Enter the message that was signed:",
             default="Sign this document.",
         )
 
@@ -152,9 +152,7 @@ def do_verify(public_key_b64: str = "", message: str = "", signature_b64: str = 
             print("\n  Error: --public-key is not valid base64url.")
             sys.exit(1)
     else:
-        derived_key_bytes = _prompt_bytes(
-            "Paste the derivedPublicKey from Step B:"
-        )
+        derived_key_bytes = _prompt_bytes("Paste the derivedPublicKey from Step B:")
 
     try:
         derived_key = CoseKey.parse(cbor.decode(derived_key_bytes))
@@ -248,15 +246,20 @@ def main():
         help="Step B: derive a public key + ARKG args from a seed public key.",
     )
     derive.add_argument(
-        "--public-key", required=True, metavar="B64",
+        "--public-key",
+        required=True,
+        metavar="B64",
         help="Seed public key (base64url) from the client's Step A.",
     )
     derive.add_argument(
-        "--context", default="quickstart-context", metavar="STR",
+        "--context",
+        default="quickstart-context",
+        metavar="STR",
         help="Context label for domain separation (default: %(default)s).",
     )
     derive.add_argument(
-        "--ikm", metavar="HEX",
+        "--ikm",
+        metavar="HEX",
         help="Optional input key material (hex). Random if omitted.",
     )
     derive.set_defaults(func=cmd_derive)
@@ -266,15 +269,21 @@ def main():
         help="Step D: verify a signature against a derived public key.",
     )
     verify.add_argument(
-        "--public-key", required=True, metavar="B64",
+        "--public-key",
+        required=True,
+        metavar="B64",
         help="Derived public key (base64url) from the derive step.",
     )
     verify.add_argument(
-        "--message", required=True, metavar="STR",
+        "--message",
+        required=True,
+        metavar="STR",
         help="The original message that was signed.",
     )
     verify.add_argument(
-        "--signature", required=True, metavar="B64",
+        "--signature",
+        required=True,
+        metavar="B64",
         help="Signature (base64url) from the client's Step C.",
     )
     verify.set_defaults(func=cmd_verify)

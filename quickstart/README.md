@@ -13,7 +13,7 @@ Before diving into the code, ensure you have:
 2.  **Yubico Authenticator**: [macOS](https://apps.apple.com/us/app/yubico-authenticator/id1497506650?mt=12) | [Windows](https://apps.microsoft.com/detail/9nfng39387k0?hl=en-US&gl=US)
 3.  **Latest SDK releases:**
     * **iOS:** [Yubikit-swift 1.3.0](https://github.com/Yubico/yubikit-swift/releases/tag/v1.3.0)
-    * **Android:** Yubikit 3.1.0
+    * **Android:** Yubikit 3.3.0
     * **Desktop:** Yubico.YubiKey 1.17.0+ (.NET 8+)
     * **Python:** Python 3.10+
 
@@ -44,6 +44,20 @@ YubiKey 5.8 implements the latest CTAP 2.3 UX enhancements, including Persistent
 | **Android** | [`/android`](./android) 
 | **.NET** | [`/dotnet`](./dotnet) 
 | **Python** | [`/python`](./python)
+
+---
+
+## 👤 Core Feature 3: Support for Post Quantum Cryptography Credential Creation Algorithms
+
+As a preparation of the soon to be available quantum computers capable of breaking common encryption, we will be adding Post Quantum Cryptography algorithms to our YubiKeys.
+
+Here you'll find the the current implementations:
+
+| Platform | Path
+| :--- | :--- 
+| **Android** | [`/pqcViewModel`](./android/app/src/main/java/com/yubico/quickstart/track/credentials/CredentialTrackViewModel.kt) 
+| **Python** | [`/python`](./python/example_pqc_credentials.py)
+| *More* | [comming soon](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ---
 

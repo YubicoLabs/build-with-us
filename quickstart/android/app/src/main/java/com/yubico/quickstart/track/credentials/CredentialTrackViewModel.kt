@@ -5,10 +5,12 @@ import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.yubico.quickstart.helpers.CredentialContainer
 import com.yubico.quickstart.helpers.DOMAIN
 import com.yubico.quickstart.helpers.DOMAIN_NAME
 import com.yubico.quickstart.helpers.encode64
 import com.yubico.quickstart.helpers.extractCredentialId
+import com.yubico.quickstart.helpers.findAlgorithm
 import com.yubico.quickstart.track.TrackViewModel
 import com.yubico.yubikit.fido.android.ui.FidoClient
 import com.yubico.yubikit.fido.android.ui.Origin
@@ -31,6 +33,10 @@ class CredentialTrackViewModel(
     )
 
     sealed class State {
+        data class AlgorithmsFound(
+            val algorithms: Map<Int, String>
+        ) : State()
+
         data class CredentialCreatedAndAsserted(
             val createCredentialOption: String,
             val createCredentialResponse: String,
@@ -49,16 +55,37 @@ class CredentialTrackViewModel(
 
     val state: MutableState<State> = mutableStateOf(State.InProgress)
 
+    lateinit var client: FidoClient
+
     override suspend fun execute(client: FidoClient, activity: Activity) {
+        this.client = client
         viewModelScope.launch {
             clearLogs()
             state.value = State.InProgress
 
+            CredentialContainer(activity).getInfo(
+                failureCallback = {
+                    state.value = State.Error("ERRROR", "$it", Log.logs)
+                }
+            ) { info ->
+                state.value = State.AlgorithmsFound(
+                    (info.session.algorithms as List<*>).map { algorithm ->
+                        val alg = (algorithm as Map<*, *>).getOrDefault("alg", null).toString().toIntOrNull() ?: 0
+                        alg to (findAlgorithm(alg)?.description ?: "Unknown")
+                    }.toMap()
+                )
+            }
+        }
+    }
 
+    fun createCredential(algId: Int) {
+        state.value = State.InProgress
+
+        viewModelScope.launch {
             val (createOption, createResponse, attestOption, attestResponse) = createAndAttestCredential(
-                client,
-                DOMAIN,
-                DOMAIN_NAME
+                algorithmId = algId,
+                domain = DOMAIN,
+                domainName = DOMAIN_NAME
             ) ?: throw IllegalStateException("Could not create credential.")
 
             state.value = State.CredentialCreatedAndAsserted(
@@ -70,7 +97,6 @@ class CredentialTrackViewModel(
         }
     }
 
-
     fun clearLogs() {
         Log.logs.clear()
 
@@ -80,7 +106,7 @@ class CredentialTrackViewModel(
     }
 
     private suspend fun createAndAttestCredential(
-        client: FidoClient,
+        algorithmId: Int,
         domain: String,
         domainName: String
     ): CreatedAndAttested? {
@@ -101,7 +127,7 @@ class CredentialTrackViewModel(
             "pubKeyCredParams": [
                 {
                     "type": "public-key",
-                    "alg": -7
+                    "alg": $algorithmId
                 }
             ],
             "authenticatorSelection": {

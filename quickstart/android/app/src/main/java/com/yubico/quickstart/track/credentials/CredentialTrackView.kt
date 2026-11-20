@@ -52,6 +52,16 @@ fun CredentialTrackView(
             typedState.assertCredentialResponse,
             onFinished = onFinished,
         )
+
+        is CredentialTrackViewModel.State.AlgorithmsFound -> UserInformationView(
+            title = stringResource(R.string.track_credential_select_algorithm),
+            message = stringResource(R.string.track_credential_select_algorithm_description),
+            informationItems = typedState.algorithms.map { "${it.key}: ${it.value}" },
+            onInformationSelected = { index ->
+                vm.createCredential(typedState.algorithms.keys.toIntArray()[index])
+            },
+            onFinished = onFinished
+        )
     }
 }
 

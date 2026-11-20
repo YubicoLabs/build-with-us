@@ -58,7 +58,7 @@ create_options, state = server.register_begin(
     user, user_verification=uv, authenticator_attachment="cross-platform"
 )
 
-print(f'create options:\n{create_options}')
+print(f"create options:\n{create_options}")
 
 # Create a credential
 result = client.make_credential(create_options["publicKey"])
