@@ -27,31 +27,31 @@
 
 from importlib.metadata import version
 
-if int(version("cryptography").split(".")[0]) < 49:                                        
+if int(version("cryptography").split(".")[0]) < 49:
     print("ML-DSA certificates require cryptography 49 or newer")
     exit(-1)
 
 from cryptography.hazmat.primitives.asymmetric import (
-        ed448,
-        ed25519,
-        mldsa,
-        rsa,
-        dsa,
-        x448,
-        x25519
+    ed448,
+    ed25519,
+    mldsa,
+    rsa,
+    dsa,
+    x448,
+    x25519,
 )
 
 print("Welcome to private key generation using cryptography")
 
-message = 'hello world'
+message = "hello world"
 print(f'Signing message: "{message}"\n')
 
 generators = {
-        "ED448": ed448.Ed448PrivateKey.generate,
-        "ED25519": ed25519.Ed25519PrivateKey.generate,
-        "MLDSA44": mldsa.MLDSA44PrivateKey.generate,
-        "MLDSA65": mldsa.MLDSA65PrivateKey.generate,
-        "MLDSA87": mldsa.MLDSA87PrivateKey.generate,
+    "ED448": ed448.Ed448PrivateKey.generate,
+    "ED25519": ed25519.Ed25519PrivateKey.generate,
+    "MLDSA44": mldsa.MLDSA44PrivateKey.generate,
+    "MLDSA65": mldsa.MLDSA65PrivateKey.generate,
+    "MLDSA87": mldsa.MLDSA87PrivateKey.generate,
 }
 
 for name in generators:
@@ -83,4 +83,4 @@ for name in generators:
 
     print()
 
-print('done')
+print("done")

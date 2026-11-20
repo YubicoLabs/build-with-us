@@ -66,7 +66,9 @@ def main():
     print(f"  maxPINLength:             {info.max_pin_length}")
     print(f"  pinComplexityPolicy:      {info.pin_complexity_policy}")
     if info.pin_complexity_policy_url:
-        print(f"  pinComplexityPolicyURL:   {info.pin_complexity_policy_url.decode('utf-8', 'replace')}")
+        print(
+            f"  pinComplexityPolicyURL:   {info.pin_complexity_policy_url.decode('utf-8', 'replace')}"
+        )
     print(f"  uvCountSinceLastPinEntry: {info.uv_count_since_pin}")
 
     # Attestation: which attestation formats the key supports (future-proofing

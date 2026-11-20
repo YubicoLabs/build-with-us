@@ -42,7 +42,7 @@ from fido2.webauthn import PublicKeyCredentialType
 # Locate a suitable FIDO authenticator
 client, info = get_client()
 
-if not any([x['alg'] in [-48,-49,-50] for x in info.algorithms]):
+if not any([x["alg"] in [-48, -49, -50] for x in info.algorithms]):
     print("Authenticator doesn't support PQC algorithms.")
     exit(-1)
 
@@ -65,25 +65,23 @@ create_options, state = server.register_begin(
 # Update parameters to only contain MLDSA:
 pkopts = create_options.public_key
 create_mldsa_options = PublicKeyCredentialCreationOptions(
-    rp = pkopts.rp,
-    user = pkopts.user,
-    challenge = pkopts.challenge,
-    pub_key_cred_params = [
-        PublicKeyCredentialParameters(
-            type=PublicKeyCredentialType.PUBLIC_KEY, alg=alg
-        ) 
+    rp=pkopts.rp,
+    user=pkopts.user,
+    challenge=pkopts.challenge,
+    pub_key_cred_params=[
+        PublicKeyCredentialParameters(type=PublicKeyCredentialType.PUBLIC_KEY, alg=alg)
         for alg in [-48, -49, -50]
     ],
-    timeout = pkopts.timeout,
-    exclude_credentials = pkopts.exclude_credentials,
-    authenticator_selection = pkopts.authenticator_selection,
-    hints = pkopts.hints,
-    attestation = pkopts.attestation,
-    attestation_formats = pkopts.attestation_formats,
-    extensions = pkopts.extensions,
+    timeout=pkopts.timeout,
+    exclude_credentials=pkopts.exclude_credentials,
+    authenticator_selection=pkopts.authenticator_selection,
+    hints=pkopts.hints,
+    attestation=pkopts.attestation,
+    attestation_formats=pkopts.attestation_formats,
+    extensions=pkopts.extensions,
 )
-        
-print(f'mldsa create options:\n{create_mldsa_options}')
+
+print(f"mldsa create options:\n{create_mldsa_options}")
 
 # Create a credential
 result = client.make_credential(options=create_mldsa_options)
