@@ -25,4 +25,6 @@
     <string name="track_arkg">Asynchronous Remote Key Generation</string>
     <string name="general_in_progress">Please wait.</string>
     <string name="general_waiting_for_yubikey">Please interact\nwith your YubiKey.</string>
+    <string name="track_credential_select_algorithm">Algorithms</string>
+    <string name="track_credential_select_algorithm_description">Select one of the following algorithms for credential creation.</string>
 </resources>
